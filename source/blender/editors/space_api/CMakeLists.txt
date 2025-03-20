@@ -26,6 +26,7 @@ set(LIB
   bf_editor_geometry
   bf_editor_space_action
   bf_editor_space_buttons
+  bf_editor_space_buttons_hypernova
   bf_editor_space_clip
   bf_editor_space_console
   bf_editor_space_file

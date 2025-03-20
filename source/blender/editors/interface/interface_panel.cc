@@ -186,6 +186,13 @@ static bool properties_space_needs_realign(const ScrArea *area, const ARegion *r
     }
   }
 
+  if (area->spacetype == SPACE_HYPERNOVA && region->regiontype == RGN_TYPE_WINDOW) {
+    const SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area->spacedata.first);
+
+    if (sbuts->mainbo != sbuts->mainb) {
+      return true;
+    }
+  }
   return false;
 }
 

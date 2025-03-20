@@ -79,6 +79,7 @@ _modules = [
     "space_node",
     "space_outliner",
     "space_properties",
+    "space_hypernova",
     "space_sequencer",
     "space_spreadsheet",
     "space_statusbar",

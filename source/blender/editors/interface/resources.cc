@@ -89,6 +89,9 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case SPACE_PROPERTIES:
           ts = &btheme->space_properties;
           break;
+        case SPACE_HYPERNOVA:
+          ts = &btheme->space_hypernova;
+          break;
         case SPACE_VIEW3D:
           ts = &btheme->space_view3d;
           break;
@@ -1112,11 +1115,17 @@ void UI_SetTheme(int spacetype, int regionid)
     g_theme_state.spacetype = spacetype;
     g_theme_state.regionid = regionid;
   }
-  else if (regionid) {
+  else if (regionid && spacetype == SPACE_PROPERTIES) {
     /* popups */
     g_theme_state.theme = static_cast<bTheme *>(U.themes.first);
     g_theme_state.spacetype = SPACE_PROPERTIES;
     g_theme_state.regionid = regionid;
+  }
+  else if(spacetype == SPACE_HYPERNOVA){
+    g_theme_state.theme = static_cast<bTheme *>(U.themes.first);
+    g_theme_state.spacetype = SPACE_HYPERNOVA;
+    g_theme_state.regionid = regionid; 
+    printf("hypernova region id assigned ");
   }
   else {
     /* for safety, when theme was deleted */
@@ -1124,6 +1133,8 @@ void UI_SetTheme(int spacetype, int regionid)
     g_theme_state.spacetype = SPACE_VIEW3D;
     g_theme_state.regionid = RGN_TYPE_WINDOW;
   }
+
+
 }
 
 bTheme *UI_GetTheme()
@@ -1457,6 +1468,8 @@ bool UI_GetIconThemeColor4ubv(int colorid, uchar col[4])
               g_theme_state.regionid == RGN_TYPE_WINDOW) ||
              (g_theme_state.spacetype == SPACE_PROPERTIES &&
               g_theme_state.regionid == RGN_TYPE_NAV_BAR) ||
+              (g_theme_state.spacetype == SPACE_HYPERNOVA &&
+                g_theme_state.regionid == RGN_TYPE_NAV_BAR) ||
              (g_theme_state.spacetype == SPACE_FILE && g_theme_state.regionid == RGN_TYPE_WINDOW)))
   {
     /* Only colored icons in specific places, overall UI is intended

@@ -10,6 +10,7 @@
 
 struct ScrArea;
 struct SpaceProperties;
+struct SpaceHypernova;
 struct bContext;
 struct PointerRNA;
 
@@ -30,5 +31,20 @@ bool ED_buttons_should_sync_with_outliner(const bContext *C,
                                           ScrArea *area);
 void ED_buttons_set_context(const bContext *C,
                             SpaceProperties *sbuts,
+                            PointerRNA *ptr,
+                            int context);
+
+int ED_buttons_tabs_list(SpaceHypernova *sbuts, short *context_tabs_array);
+bool ED_buttons_tab_has_search_result(SpaceHypernova *sbuts, int index);
+
+void ED_buttons_search_string_set(SpaceHypernova *sbuts, const char *value);
+int ED_buttons_search_string_length(SpaceHypernova *sbuts);
+const char *ED_buttons_search_string_get(SpaceHypernova *sbuts);
+
+bool ED_buttons_should_sync_with_outliner(const bContext *C,
+                                          const SpaceHypernova *sbuts,
+                                          ScrArea *area);
+void ED_buttons_set_context(const bContext *C,
+                            SpaceHypernova *sbuts,
                             PointerRNA *ptr,
                             int context);

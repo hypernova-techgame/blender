@@ -493,6 +493,7 @@ struct wmNotifier {
 #define ND_SPACE_OUTLINER (9 << 16)
 #define ND_SPACE_VIEW3D (10 << 16)
 #define ND_SPACE_PROPERTIES (11 << 16)
+#define ND_SPACE_HYPERNOVA (24 << 16)
 #define ND_SPACE_TEXT (12 << 16)
 #define ND_SPACE_TIME (13 << 16)
 #define ND_SPACE_GRAPH (14 << 16)

@@ -194,7 +194,7 @@ static void rna_annotation_active_layer_index_set(PointerRNA *ptr, int value)
 
   /* Now do standard updates... */
   DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
-  WM_main_add_notifier(NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES, nullptr);
+  WM_main_add_notifier(NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES | ND_SPACE_HYPERNOVA, nullptr);
 }
 
 static void rna_annotation_active_layer_index_range(

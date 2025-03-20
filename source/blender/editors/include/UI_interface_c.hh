@@ -2780,10 +2780,16 @@ void uiTemplateNodeLink(
 void uiTemplateNodeView(
     uiLayout *layout, bContext *C, bNodeTree *ntree, bNode *node, bNodeSocket *input);
 void uiTemplateTextureUser(uiLayout *layout, bContext *C);
+void uiTemplateTextureUserHypernova(uiLayout *layout, bContext *C);
 /**
  * Button to quickly show texture in Properties Editor texture tab.
  */
 void uiTemplateTextureShow(uiLayout *layout,
+                           const bContext *C,
+                           PointerRNA *ptr,
+                           PropertyRNA *prop);
+
+void uiTemplateTextureShowHypernova(uiLayout *layout,
                            const bContext *C,
                            PointerRNA *ptr,
                            PropertyRNA *prop);

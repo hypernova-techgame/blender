@@ -4262,7 +4262,34 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         }
       }
     }
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_HYPERNOVA) {
+            ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                   &sl->regionbase;
+            ARegion *region = static_cast<ARegion *>(
+                MEM_callocN(sizeof(ARegion), "navigation bar for properties"));
+            ARegion *region_header = nullptr;
 
+            for (region_header = static_cast<ARegion *>(regionbase->first);
+                 region_header != nullptr;
+                 region_header = static_cast<ARegion *>(region_header->next))
+            {
+              if (region_header->regiontype == RGN_TYPE_HEADER) {
+                break;
+              }
+            }
+            BLI_assert(region_header);
+
+            BLI_insertlinkafter(regionbase, region_header, region);
+
+            region->regiontype = RGN_TYPE_NAV_BAR;
+            region->alignment = RGN_ALIGN_LEFT;
+          }
+        }
+      }
+    }
     /* grease pencil fade layer opacity */
     if (!DNA_struct_member_exists(fd->filesdna, "View3DOverlay", "float", "gpencil_fade_layer")) {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
@@ -4618,6 +4645,11 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             }
             case SPACE_PROPERTIES: {
               SpaceProperties *sbuts = (SpaceProperties *)sl;
+              sbuts->flag &= ~(SB_FLAG_UNUSED_2 | SB_FLAG_UNUSED_3);
+              break;
+            }
+            case SPACE_HYPERNOVA: {
+              SpaceHypernova *sbuts = (SpaceHypernova *)sl;
               sbuts->flag &= ~(SB_FLAG_UNUSED_2 | SB_FLAG_UNUSED_3);
               break;
             }

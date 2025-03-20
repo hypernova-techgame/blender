@@ -4,8 +4,7 @@
 
 /** \file
  * \ingroup bke
- */
-
+ */ 
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -848,6 +847,18 @@ SpaceProperties *CTX_wm_space_properties(const bContext *C)
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_PROPERTIES) {
     return static_cast<SpaceProperties *>(area->spacedata.first);
+  }
+  return nullptr;
+}
+
+SpaceHypernova *CTX_wm_space_hypernova(const bContext *C)
+{
+  ScrArea *area = CTX_wm_area(C);
+  if (area && area->spacetype == SPACE_HYPERNOVA) {
+    return static_cast<SpaceHypernova *>(area->spacedata.first);
+    printf("1.hypernova space created (ctx wm space hypernova)");
+  }else{
+    printf("1.issue occured (ctx wm space hypernova)");
   }
   return nullptr;
 }

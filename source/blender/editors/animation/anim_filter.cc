@@ -333,6 +333,7 @@ bool ANIM_animdata_context_getdata(bAnimContext *ac)
       case SPACE_VIEW3D:
       case SPACE_OUTLINER:
       case SPACE_PROPERTIES:
+      case SPACE_HYPERNOVA:
       case SPACE_FILE:
       case SPACE_IMAGE:
       case SPACE_INFO:

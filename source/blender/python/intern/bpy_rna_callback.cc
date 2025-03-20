@@ -207,6 +207,9 @@ static eSpace_Type rna_Space_refine_reverse(StructRNA *srna)
   }
   if (srna == &RNA_SpaceProperties) {
     return SPACE_PROPERTIES;
+  } 
+  if (srna == &RNA_SpaceHypernova) {
+    return SPACE_HYPERNOVA;
   }
   if (srna == &RNA_SpaceFileBrowser) {
     return SPACE_FILE;

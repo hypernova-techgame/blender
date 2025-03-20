@@ -926,7 +926,8 @@ void RNA_def_material(BlenderRNA *brna)
       srna,
       "Material",
       "Material data-block to define the appearance of geometric objects for rendering");
-  RNA_def_struct_ui_icon(srna, ICON_MATERIAL_DATA);
+  RNA_def_struct_ui_icon(srna, ICON_FREEZE);
+  printf("This is the place where you searching \n");
 
   prop = RNA_def_property(srna, "surface_render_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, prop_eevee_surface_render_method_items);

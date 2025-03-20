@@ -1061,6 +1061,59 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
             else {
               sbuts->mainb = CONTEXT_SCENE;
             }
+          } 
+        }
+      }
+
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) { 
+          if (sl->spacetype == SPACE_HYPERNOVA) {
+            SpaceHypernova *sbuts = (SpaceHypernova *)sl;
+
+            sbuts->v2d.maxzoom = 1.2f;
+
+            if (sbuts->mainb == BUTS_LAMP) {
+              sbuts->mainb = CONTEXT_SHADING;
+              // sbuts->tab[CONTEXT_SHADING] = TAB_SHADING_LAMP;
+            }
+            else if (sbuts->mainb == BUTS_MAT) {
+              sbuts->mainb = CONTEXT_SHADING;
+              // sbuts->tab[CONTEXT_SHADING] = TAB_SHADING_MAT;
+            }
+            else if (sbuts->mainb == BUTS_TEX) {
+              sbuts->mainb = CONTEXT_SHADING;
+              // sbuts->tab[CONTEXT_SHADING] = TAB_SHADING_TEX;
+            }
+            else if (sbuts->mainb == BUTS_ANIM) {
+              sbuts->mainb = CONTEXT_OBJECT;
+            }
+            else if (sbuts->mainb == BUTS_WORLD) {
+              sbuts->mainb = CONTEXT_SCENE;
+              // sbuts->tab[CONTEXT_SCENE] = TAB_SCENE_WORLD;
+            }
+            else if (sbuts->mainb == BUTS_RENDER) {
+              sbuts->mainb = CONTEXT_SCENE;
+              // sbuts->tab[CONTEXT_SCENE] = TAB_SCENE_RENDER;
+            }
+            else if (sbuts->mainb == BUTS_FPAINT) {
+              sbuts->mainb = CONTEXT_EDITING;
+            }
+            else if (sbuts->mainb == BUTS_RADIO) {
+              sbuts->mainb = CONTEXT_SHADING;
+              // sbuts->tab[CONTEXT_SHADING] = TAB_SHADING_RAD;
+            }
+            else if (sbuts->mainb == BUTS_CONSTRAINT) {
+              sbuts->mainb = CONTEXT_OBJECT;
+            }
+            else if (sbuts->mainb == BUTS_SCRIPT) {
+              sbuts->mainb = CONTEXT_OBJECT;
+            }
+            else if (sbuts->mainb == BUTS_EDIT) {
+              sbuts->mainb = CONTEXT_EDITING;
+            }
+            else {
+              sbuts->mainb = CONTEXT_SCENE;
+            }
           }
         }
       }

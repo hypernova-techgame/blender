@@ -1708,6 +1708,7 @@ static void template_ID(const bContext *C,
 
   if (template_ui.idcode == ID_TE) {
     uiTemplateTextureShow(layout, C, &template_ui.ptr, template_ui.prop);
+    uiTemplateTextureShowHypernova(layout, C, &template_ui.ptr, template_ui.prop);
   }
   UI_block_align_end(block);
 }
@@ -7442,6 +7443,23 @@ void uiTemplateCacheFile(uiLayout *layout,
     row = uiLayoutRow(layout, false);
     uiItemR(row, &fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
   }
+  
+  printf("hypernova layout about to start (interface templates)");
+  /* Hypernova */
+  SpaceHypernova *sbuttons = CTX_wm_space_hypernova(C);
+
+  uiLayout *rowHypernova, *subHypernova; 
+
+  rowHypernova = uiLayoutRow(layout, true);
+  uiItemR(rowHypernova, &fileptr, "filepath", UI_ITEM_NONE, nullptr, ICON_NONE);
+  subHypernova = uiLayoutRow(rowHypernova, true);
+  uiItemO(subHypernova, "", ICON_FILE_REFRESH, "cachefile.reload");
+
+  if (sbuttons->mainb == BCONTEXT_CONSTRAINT) {
+    rowHypernova = uiLayoutRow(layout, false);
+    uiItemR(rowHypernova, &fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
+  }
+
 
   /* TODO: unused for now, so no need to expose. */
 #if 0

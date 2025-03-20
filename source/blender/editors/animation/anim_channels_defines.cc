@@ -1677,7 +1677,7 @@ static bAnimChannelType ACF_FILLDRIVERS = {
 /* TODO: just get this from RNA? */
 static int acf_dsmat_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_MATERIAL_DATA;
+  return ICON_FREEZE;
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */

@@ -640,7 +640,7 @@ const char *RNA_struct_ui_name_raw(const StructRNA *type)
 int RNA_struct_ui_icon(const StructRNA *type)
 {
   if (type) {
-    return type->icon;
+    return type->icon; // ICON_FREEZE (Panel icons not the tabs)
   }
   return ICON_DOT;
 }

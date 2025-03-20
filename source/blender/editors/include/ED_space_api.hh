@@ -29,6 +29,7 @@ void ED_spacetype_ipo();
 void ED_spacetype_image();
 void ED_spacetype_node();
 void ED_spacetype_buttons();
+void ED_spacetype_buttons_hypernova();
 void ED_spacetype_info();
 void ED_spacetype_file();
 void ED_spacetype_action();

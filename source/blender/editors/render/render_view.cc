@@ -58,6 +58,12 @@ static ScrArea *biggest_non_image_area(bContext *C)
           big = area;
         }
       }
+      else if (!area->full && area->spacetype == SPACE_HYPERNOVA) {
+        if (foundwin == 0 && size > bwmaxsize) {
+          bwmaxsize = size;
+          big = area;
+        }
+      }
       else if (area->spacetype != SPACE_IMAGE && size > maxsize) {
         maxsize = size;
         big = area;

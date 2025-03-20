@@ -613,7 +613,7 @@ static void rna_def_collection_exporter_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", IO_HANDLER_PANEL_OPEN);
   RNA_def_property_ui_text(prop, "Is Open", "Whether the panel is expanded or closed");
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_PROPERTIES | ND_SPACE_HYPERNOVA , nullptr);
 
   prop = RNA_def_property(srna, "export_properties", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "PropertyGroup");

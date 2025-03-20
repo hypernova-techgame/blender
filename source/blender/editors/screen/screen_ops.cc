@@ -345,6 +345,11 @@ bool ED_operator_buttons_active(bContext *C)
   return ed_spacetype_test(C, SPACE_PROPERTIES);
 }
 
+bool ED_operator_buttons_hypernova_active(bContext *C)
+{
+  return ed_spacetype_test(C, SPACE_HYPERNOVA);
+}
+
 bool ED_operator_node_active(bContext *C)
 {
   SpaceNode *snode = CTX_wm_space_node(C);
@@ -5200,6 +5205,11 @@ static bool match_region_with_redraws(const ScrArea *area,
           return true;
         }
         break;
+      case SPACE_HYPERNOVA:
+        if (redraws & TIME_ALL_BUTS_WIN) {
+          return true;
+        }
+        break;
       case SPACE_SEQ:
         if ((redraws & (TIME_SEQ | TIME_ALL_ANIM_WIN)) || from_anim_edit) {
           return true;
@@ -6353,7 +6363,7 @@ static bool space_context_cycle_poll(bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   /* area might be nullptr if called out of window bounds */
-  return (area && ELEM(area->spacetype, SPACE_PROPERTIES, SPACE_USERPREF));
+  return (area && ELEM(area->spacetype, SPACE_PROPERTIES, SPACE_USERPREF,SPACE_HYPERNOVA));
 }
 
 /**
@@ -6371,6 +6381,10 @@ static void context_cycle_prop_get(bScreen *screen,
     case SPACE_PROPERTIES:
       *r_ptr = RNA_pointer_create(&screen->id, &RNA_SpaceProperties, area->spacedata.first);
       propname = "context";
+      break;
+    case SPACE_HYPERNOVA:
+      *r_ptr = RNA_pointer_create(&screen->id, &RNA_SpaceHypernova, area->spacedata.first);
+      propname = "context_hypernova"; //Crucial Hypernova context should be differentiated from the context properties 
       break;
     case SPACE_USERPREF:
       *r_ptr = RNA_pointer_create(nullptr, &RNA_Preferences, &U);

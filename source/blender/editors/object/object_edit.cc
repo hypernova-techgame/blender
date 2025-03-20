@@ -158,9 +158,13 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
 
   Object *ob = nullptr;
   bool use_ob = true;
-
+  /* BE CAREFUL ABOUT THE ID_PIN Hypernova*/
   if (space_type == SPACE_PROPERTIES) {
     SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
+    id_pin = sbuts->pinid;
+  }
+  if (space_type == SPACE_HYPERNOVA) {
+    SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area->spacedata.first);
     id_pin = sbuts->pinid;
   }
 
@@ -169,6 +173,15 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
     ob = (Object *)id_pin;
   }
   else if ((space_type == SPACE_PROPERTIES) && (use_objects_in_mode == false)) {
+    /* When using the space-properties, we don't want to use the entire selection
+     * as the current active object may not be selected.
+     *
+     * This is not the case when we're in a mode that supports multi-mode editing,
+     * since the active object and all other objects in the mode will be included
+     * irrespective of selection. */
+    ob = ob_active;
+  }
+  else if ((space_type == SPACE_HYPERNOVA) && (use_objects_in_mode == false)) {
     /* When using the space-properties, we don't want to use the entire selection
      * as the current active object may not be selected.
      *

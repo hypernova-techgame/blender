@@ -631,6 +631,7 @@ static MenuSearch_Data *menu_items_from_ui_create(bContext *C,
           SPACE_MENU_MAP(SPACE_GRAPH, "GRAPH_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_OUTLINER, "OUTLINER_MT_editor_menus");
           SPACE_MENU_NOP(SPACE_PROPERTIES);
+          SPACE_MENU_NOP(SPACE_HYPERNOVA);
           SPACE_MENU_MAP(SPACE_FILE, "FILEBROWSER_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_IMAGE, "IMAGE_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_INFO, "INFO_MT_editor_menus");

@@ -2508,7 +2508,7 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       }
     }
     case ID_MA:
-      return ICON_MATERIAL_DATA;
+      return ICON_FREEZE;
     case ID_TE:
       return ICON_TEXTURE_DATA;
     case ID_IM:

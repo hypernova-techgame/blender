@@ -2174,7 +2174,7 @@ static void rna_def_userdef_theme_space_common(StructRNA *srna)
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   /* buttons */
-  // if (!ELEM(spacetype, SPACE_PROPERTIES, SPACE_OUTLINER)) {
+  // if (!ELEM(spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA, SPACE_OUTLINER)) {
   prop = RNA_def_property(srna, "button", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Region Background", "");
@@ -3536,6 +3536,31 @@ static void rna_def_userdef_theme_space_buts(BlenderRNA *brna)
   rna_def_userdef_theme_spaces_main(srna);
 }
 
+static void rna_def_userdef_theme_space_buts_hypernova(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  /* space_buts */
+
+  srna = RNA_def_struct(brna, "ThemeHypernova", nullptr);
+  RNA_def_struct_sdna(srna, "ThemeSpace");
+  RNA_def_struct_ui_text(srna, "Theme Hypernova", "Theme settings for the Properties");
+
+  prop = RNA_def_property(srna, "match", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Search Match", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "active_modifier", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "active");
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Active Modifier Outline", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  rna_def_userdef_theme_spaces_main(srna);
+}
+ 
 static void rna_def_userdef_theme_space_image(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -4514,6 +4539,7 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
       {12, "OUTLINER", ICON_OUTLINER, "Outliner", ""},
       {14, "PREFERENCES", ICON_PREFERENCES, "Preferences", ""},
       {11, "PROPERTIES", ICON_PROPERTIES, "Properties", ""},
+      {24, "HYPERNOVA", ICON_FREEZE, "Hypernova", ""}, 
       {17, "CONSOLE", ICON_CONSOLE, "Python Console", ""},
       {23, "SPREADSHEET", ICON_SPREADSHEET, "Spreadsheet"},
       {22, "STATUSBAR", ICON_STATUSBAR, "Status Bar", ""},
@@ -4603,6 +4629,12 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, nullptr, "space_properties");
   RNA_def_property_struct_type(prop, "ThemeProperties");
   RNA_def_property_ui_text(prop, "Properties", "");
+
+  prop = RNA_def_property(srna, "hypernova", PROP_POINTER, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_pointer_sdna(prop, nullptr, "space_hypernova");
+  RNA_def_property_struct_type(prop, "ThemeHypernova");
+  RNA_def_property_ui_text(prop, "Hypernova", "");
 
   prop = RNA_def_property(srna, "text_editor", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
@@ -4892,6 +4924,7 @@ static void rna_def_userdef_dothemes(BlenderRNA *brna)
   rna_def_userdef_theme_space_image(brna);
   rna_def_userdef_theme_space_seq(brna);
   rna_def_userdef_theme_space_buts(brna);
+  rna_def_userdef_theme_space_buts_hypernova(brna);
   rna_def_userdef_theme_space_text(brna);
   rna_def_userdef_theme_space_node(brna);
   rna_def_userdef_theme_space_outliner(brna);

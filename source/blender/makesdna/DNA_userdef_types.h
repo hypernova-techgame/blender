@@ -515,6 +515,7 @@ typedef struct bTheme {
    * \note Ensure #UI_THEMESPACE_END is updated when adding.
    */
   ThemeSpace space_properties;
+  ThemeSpace space_hypernova;
   ThemeSpace space_view3d;
   ThemeSpace space_file;
   ThemeSpace space_graph;
@@ -547,7 +548,7 @@ typedef struct bTheme {
 } bTheme;
 
 #define UI_THEMESPACE_START(btheme) \
-  (CHECK_TYPE_INLINE(btheme, bTheme *), &((btheme)->space_properties))
+  (CHECK_TYPE_INLINE(btheme, bTheme *), &((btheme)->space_properties)) 
 #define UI_THEMESPACE_END(btheme) \
   (CHECK_TYPE_INLINE(btheme, bTheme *), (&((btheme)->space_spreadsheet) + 1))
 

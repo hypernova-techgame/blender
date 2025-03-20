@@ -92,6 +92,7 @@ bGPdata **ED_gpencil_data_get_pointers_direct(ScrArea *area, Object *ob, Pointer
   if (area) {
     switch (area->spacetype) {
       case SPACE_PROPERTIES: /* properties */
+      case SPACE_HYPERNOVA: /* hypernova */
       case SPACE_INFO:       /* header info */
       case SPACE_TOPBAR:     /* Top-bar */
       case SPACE_VIEW3D:     /* 3D-View */
@@ -132,6 +133,13 @@ bGPdata **ED_annotation_data_get_pointers_direct(ID *screen_id,
       case SPACE_TOPBAR:     /* Top-bar */
       case SPACE_VIEW3D:     /* 3D-View */
       case SPACE_PROPERTIES: /* properties */
+      {
+        if (r_ptr) {
+          *r_ptr = RNA_id_pointer_create(&scene->id);
+        }
+        return &scene->gpd;
+      }
+      case SPACE_HYPERNOVA: /* hypernova */
       {
         if (r_ptr) {
           *r_ptr = RNA_id_pointer_create(&scene->id);
@@ -289,7 +297,7 @@ bool ED_gpencil_stroke_can_use_direct(const ScrArea *area, const bGPDstroke *gps
   /* filter stroke types by flags + spacetype */
   if (gps->flag & GP_STROKE_3DSPACE) {
     /* 3D strokes - only in 3D view */
-    return ELEM(area->spacetype, SPACE_VIEW3D, SPACE_PROPERTIES);
+    return ELEM(area->spacetype, SPACE_VIEW3D, SPACE_PROPERTIES, SPACE_HYPERNOVA);
   }
   if (gps->flag & GP_STROKE_2DIMAGE) {
     /* Special "image" strokes - only in Image Editor */

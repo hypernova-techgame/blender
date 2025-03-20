@@ -62,7 +62,7 @@ void ED_spacetypes_init()
 {
   using namespace blender::ed;
   /* UI unit is a variable, may be used in some space type initialization. */
-  U.widget_unit = 20;
+  U.widget_unit = 21;
 
   /* Create space types. */
   ED_spacetype_outliner();
@@ -71,6 +71,7 @@ void ED_spacetypes_init()
   ED_spacetype_image();
   ED_spacetype_node();
   ED_spacetype_buttons();
+  ED_spacetype_buttons_hypernova();
   ED_spacetype_info();
   ED_spacetype_file();
   ED_spacetype_action();

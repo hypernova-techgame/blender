@@ -783,6 +783,13 @@ const char *ED_area_region_search_filter_get(const ScrArea *area, const ARegion 
       return ED_buttons_search_string_get(sbuts);
     }
   }
+  /* Only the hypernova editor has a search string for now. */
+  if (area->spacetype == SPACE_HYPERNOVA) {
+    SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area->spacedata.first);
+    if (region->regiontype == RGN_TYPE_WINDOW) {
+      return ED_buttons_search_string_get(sbuts);
+    }
+  }
 
   return nullptr;
 }

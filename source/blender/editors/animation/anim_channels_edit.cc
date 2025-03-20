@@ -4384,7 +4384,7 @@ static int click_select_channel_gplayer(bContext *C,
   }
 
   /* Grease Pencil updates */
-  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES | ND_SPACE_HYPERNOVA, nullptr);
   return (ND_ANIMCHAN | NA_EDITED); /* Animation Editors updates */
 }
 

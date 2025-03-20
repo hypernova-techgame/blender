@@ -507,6 +507,7 @@ static int collection_exporter_add_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
 
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_HYPERNOVA, nullptr);
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   return OPERATOR_FINISHED;
@@ -553,6 +554,7 @@ static int collection_exporter_remove_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
 
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_HYPERNOVA, nullptr);
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   return OPERATOR_FINISHED;

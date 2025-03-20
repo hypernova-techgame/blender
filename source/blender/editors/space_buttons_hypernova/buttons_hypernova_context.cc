@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
- * \ingroup spbuttons
+ * \ingroup spbuttons_hypernova
  */
 
 #include <cstdlib>
-#include <cstring>
-
+#include <cstring> 
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
@@ -48,8 +47,8 @@
 #include "UI_resources.hh"
 
 #include "WM_api.hh"
-
-#include "buttons_intern.hh" /* own include */
+#include "CLG_log.h"
+#include "buttons_hypernova_intern.hh" /* own include */
 
 static int set_pointer_type(ButsContextPath *path, bContextDataResult *result, StructRNA *type)
 {
@@ -80,7 +79,7 @@ static PointerRNA *get_pointer_type(ButsContextPath *path, StructRNA *type)
 
 /************************* Creating the Path ************************/
 
-static bool buttons_context_path_scene(ButsContextPath *path)
+static bool buttons_hypernova_context_path_scene(ButsContextPath *path)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
@@ -88,17 +87,17 @@ static bool buttons_context_path_scene(ButsContextPath *path)
   return RNA_struct_is_a(ptr->type, &RNA_Scene);
 }
 
-static bool buttons_context_path_view_layer(ButsContextPath *path, wmWindow *win)
+static bool buttons_hypernova_context_path_view_layer(ButsContextPath *path, wmWindow *win)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
   /* View Layer may have already been resolved in a previous call
-   * (e.g. in buttons_context_path_linestyle). */
+   * (e.g. in buttons_hypernova_context_path_linestyle). */
   if (RNA_struct_is_a(ptr->type, &RNA_ViewLayer)) {
     return true;
   }
 
-  if (buttons_context_path_scene(path)) {
+  if (buttons_hypernova_context_path_scene(path)) {
     Scene *scene = static_cast<Scene *>(path->ptr[path->len - 1].data);
     ViewLayer *view_layer = (win->scene == scene) ? WM_window_get_active_view_layer(win) :
                                                     BKE_view_layer_default_view(scene);
@@ -112,9 +111,10 @@ static bool buttons_context_path_view_layer(ButsContextPath *path, wmWindow *win
 }
 
 /* NOTE: this function can return true without adding a world to the path
- * so the buttons stay visible, but be sure to check the ID type if a ID_WO */
-static bool buttons_context_path_world(ButsContextPath *path)
+ * so the buttons_hypernova stay visible, but be sure to check the ID type if a ID_WO */
+static bool buttons_hypernova_context_path_world(ButsContextPath *path)
 {
+   
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
   /* if we already have a (pinned) world, we're done */
@@ -122,7 +122,7 @@ static bool buttons_context_path_world(ButsContextPath *path)
     return true;
   }
   /* if we have a scene, use the scene's world */
-  if (buttons_context_path_scene(path)) {
+  if (buttons_hypernova_context_path_scene(path)) {
     Scene *scene = static_cast<Scene *>(path->ptr[path->len - 1].data);
     World *world = scene->world;
 
@@ -139,10 +139,10 @@ static bool buttons_context_path_world(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_collection(const bContext *C,
+static bool buttons_hypernova_context_path_collection(const bContext *C,
                                             ButsContextPath *path,
                                             wmWindow *window)
-{
+{ 
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
   /* if we already have a (pinned) collection, we're done */
@@ -153,7 +153,7 @@ static bool buttons_context_path_collection(const bContext *C,
   Scene *scene = CTX_data_scene(C);
 
   /* if we have a view layer, use the view layer's active collection */
-  if (buttons_context_path_view_layer(path, window)) {
+  if (buttons_hypernova_context_path_view_layer(path, window)) {
     ViewLayer *view_layer = static_cast<ViewLayer *>(path->ptr[path->len - 1].data);
     BKE_view_layer_synced_ensure(scene, view_layer);
     Collection *c = BKE_view_layer_active_collection_get(view_layer)->collection;
@@ -174,8 +174,8 @@ static bool buttons_context_path_collection(const bContext *C,
   return false;
 }
 
-static bool buttons_context_path_linestyle(ButsContextPath *path, wmWindow *window)
-{
+static bool buttons_hypernova_context_path_linestyle(ButsContextPath *path, wmWindow *window)
+{ 
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
   /* if we already have a (pinned) linestyle, we're done */
@@ -183,7 +183,7 @@ static bool buttons_context_path_linestyle(ButsContextPath *path, wmWindow *wind
     return true;
   }
   /* if we have a view layer, use the lineset's linestyle */
-  if (buttons_context_path_view_layer(path, window)) {
+  if (buttons_hypernova_context_path_view_layer(path, window)) {
     ViewLayer *view_layer = static_cast<ViewLayer *>(path->ptr[path->len - 1].data);
     FreestyleLineStyle *linestyle = BKE_linestyle_active_from_view_layer(view_layer);
     if (linestyle) {
@@ -191,16 +191,14 @@ static bool buttons_context_path_linestyle(ButsContextPath *path, wmWindow *wind
       path->len++;
       return true;
     }
-  }
-
+  } 
   /* no path to a linestyle possible */
   return false;
 }
 
-static bool buttons_context_path_object(ButsContextPath *path)
+static bool buttons_hypernova_context_path_object(ButsContextPath *path)
 {
-  PointerRNA *ptr = &path->ptr[path->len - 1];
-
+  PointerRNA *ptr = &path->ptr[path->len - 1];  
   /* if we already have a (pinned) object, we're done */
   if (RNA_struct_is_a(ptr->type, &RNA_Object)) {
     return true;
@@ -223,8 +221,8 @@ static bool buttons_context_path_object(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_data(ButsContextPath *path, int type)
-{
+static bool buttons_hypernova_context_path_data(ButsContextPath *path, int type)
+{ 
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
   /* if we already have a data, we're done */
@@ -275,7 +273,7 @@ static bool buttons_context_path_data(ButsContextPath *path, int type)
     return true;
   }
   /* try to get an object in the path, no pinning supported here */
-  if (buttons_context_path_object(path)) {
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
 
     if (ob && ELEM(type, -1, ob->type)) {
@@ -290,9 +288,9 @@ static bool buttons_context_path_data(ButsContextPath *path, int type)
   return false;
 }
 
-static bool buttons_context_path_modifier(ButsContextPath *path)
-{
-  if (buttons_context_path_object(path)) {
+static bool buttons_hypernova_context_path_modifier(ButsContextPath *path)
+{ 
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
 
     if (ELEM(ob->type,
@@ -320,9 +318,9 @@ static bool buttons_context_path_modifier(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_shaderfx(ButsContextPath *path)
+static bool buttons_hypernova_context_path_shaderfx(ButsContextPath *path)
 {
-  if (buttons_context_path_object(path)) {
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
 
     if (ob && ELEM(ob->type, OB_GPENCIL_LEGACY, OB_GREASE_PENCIL)) {
@@ -333,7 +331,7 @@ static bool buttons_context_path_shaderfx(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_material(ButsContextPath *path)
+static bool buttons_hypernova_context_path_material(ButsContextPath *path)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
@@ -342,7 +340,7 @@ static bool buttons_context_path_material(ButsContextPath *path)
     return true;
   }
   /* if we have an object, use the object material slot */
-  if (buttons_context_path_object(path)) {
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
 
     if (ob && OB_TYPE_SUPPORT_MATERIAL(ob->type)) {
@@ -359,10 +357,10 @@ static bool buttons_context_path_material(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_bone(ButsContextPath *path)
+static bool buttons_hypernova_context_path_bone(ButsContextPath *path)
 {
   /* if we have an armature, get the active bone */
-  if (buttons_context_path_data(path, OB_ARMATURE)) {
+  if (buttons_hypernova_context_path_data(path, OB_ARMATURE)) {
     bArmature *arm = static_cast<bArmature *>(path->ptr[path->len - 1].data);
 
     if (arm->edbo) {
@@ -386,7 +384,7 @@ static bool buttons_context_path_bone(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_pose_bone(ButsContextPath *path)
+static bool buttons_hypernova_context_path_pose_bone(ButsContextPath *path)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
@@ -396,7 +394,7 @@ static bool buttons_context_path_pose_bone(ButsContextPath *path)
   }
 
   /* if we have an armature, get the active bone */
-  if (buttons_context_path_object(path)) {
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
     bArmature *arm = static_cast<bArmature *>(
         ob->data); /* path->ptr[path->len-1].data - works too */
@@ -419,7 +417,7 @@ static bool buttons_context_path_pose_bone(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_particle(ButsContextPath *path)
+static bool buttons_hypernova_context_path_particle(ButsContextPath *path)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
@@ -428,7 +426,7 @@ static bool buttons_context_path_particle(ButsContextPath *path)
     return true;
   }
   /* if we have an object, get the active particle system */
-  if (buttons_context_path_object(path)) {
+  if (buttons_hypernova_context_path_object(path)) {
     Object *ob = static_cast<Object *>(path->ptr[path->len - 1].data);
 
     if (ob && ob->type == OB_MESH) {
@@ -444,7 +442,7 @@ static bool buttons_context_path_particle(ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_brush(const bContext *C, ButsContextPath *path)
+static bool buttons_hypernova_context_path_brush(const bContext *C, ButsContextPath *path)
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
@@ -453,7 +451,7 @@ static bool buttons_context_path_brush(const bContext *C, ButsContextPath *path)
     return true;
   }
   /* If we have a scene, use the tool-settings brushes. */
-  if (buttons_context_path_scene(path)) {
+  if (buttons_hypernova_context_path_scene(path)) {
     Scene *scene = static_cast<Scene *>(path->ptr[path->len - 1].data);
 
     Brush *br = nullptr;
@@ -475,7 +473,7 @@ static bool buttons_context_path_brush(const bContext *C, ButsContextPath *path)
   return false;
 }
 
-static bool buttons_context_path_texture(const bContext *C,
+static bool buttons_hypernova_context_path_texture(const bContext *C,
                                          ButsContextPath *path,
                                          ButsContextTexture *ct)
 {
@@ -498,16 +496,16 @@ static bool buttons_context_path_texture(const bContext *C,
 
   if (id) {
     if (GS(id->name) == ID_BR) {
-      buttons_context_path_brush(C, path);
+      buttons_hypernova_context_path_brush(C, path);
     }
     else if (GS(id->name) == ID_PA) {
-      buttons_context_path_particle(path);
+      buttons_hypernova_context_path_particle(path);
     }
     else if (GS(id->name) == ID_OB) {
-      buttons_context_path_object(path);
+      buttons_hypernova_context_path_object(path);
     }
     else if (GS(id->name) == ID_LS) {
-      buttons_context_path_linestyle(path, CTX_wm_window(C));
+      buttons_hypernova_context_path_linestyle(path, CTX_wm_window(C));
     }
   }
 
@@ -520,7 +518,7 @@ static bool buttons_context_path_texture(const bContext *C,
 }
 
 #ifdef WITH_FREESTYLE
-static bool buttons_context_linestyle_pinnable(const bContext *C, ViewLayer *view_layer)
+static bool buttons_hypernova_context_linestyle_pinnable(const bContext *C, ViewLayer *view_layer)
 {
   wmWindow *window = CTX_wm_window(C);
   Scene *scene = WM_window_get_active_scene(window);
@@ -535,21 +533,16 @@ static bool buttons_context_linestyle_pinnable(const bContext *C, ViewLayer *vie
     return false;
   }
   /* if the scene has already been pinned */
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
   if (sbuts->pinid && sbuts->pinid == &scene->id) {
-    return false;
-  }
-  /* if the scene has already been pinned */
-  SpaceHypernova *sbutsHypernova = CTX_wm_space_hypernova(C);
-  if (sbutsHypernova->pinid && sbutsHypernova->pinid == &scene->id) {
     return false;
   }
   return true;
 }
 #endif
 
-static bool buttons_context_path(
-    const bContext *C, SpaceProperties *sbuts, ButsContextPath *path, int mainb, int flag)
+static bool buttons_hypernova_context_path(
+    const bContext *C, SpaceHypernova *sbuts, ButsContextPath *path, int mainb, int flag)
 {
   /* Note we don't use CTX_data here, instead we get it from the window.
    * Otherwise there is a loop reading the context that we are setting. */
@@ -584,31 +577,31 @@ static bool buttons_context_path(
     }
   }
 
-  /* now for each buttons context type, we try to construct a path,
+  /* now for each buttons_hypernova context type, we try to construct a path,
    * tracing back recursively */
   bool found;
   switch (mainb) {
     case BCONTEXT_SCENE:
     case BCONTEXT_RENDER:
     case BCONTEXT_OUTPUT:
-      found = buttons_context_path_scene(path);
+      found = buttons_hypernova_context_path_scene(path);
       break;
     case BCONTEXT_VIEW_LAYER:
 #ifdef WITH_FREESTYLE
-      if (buttons_context_linestyle_pinnable(C, view_layer)) {
-        found = buttons_context_path_linestyle(path, window);
+      if (buttons_hypernova_context_linestyle_pinnable(C, view_layer)) {
+        found = buttons_hypernova_context_path_linestyle(path, window);
         if (found) {
           break;
         }
       }
 #endif
-      found = buttons_context_path_view_layer(path, window);
+      found = buttons_hypernova_context_path_view_layer(path, window);
       break;
     case BCONTEXT_WORLD:
-      found = buttons_context_path_world(path);
+      found = buttons_hypernova_context_path_world(path);
       break;
     case BCONTEXT_COLLECTION: /* This is for Line Art collection flags */
-      found = buttons_context_path_collection(C, path, window);
+      found = buttons_hypernova_context_path_collection(C, path, window);
       break;
     case BCONTEXT_TOOL:
       found = true;
@@ -616,35 +609,35 @@ static bool buttons_context_path(
     case BCONTEXT_OBJECT:
     case BCONTEXT_PHYSICS:
     case BCONTEXT_CONSTRAINT:
-      found = buttons_context_path_object(path);
+      found = buttons_hypernova_context_path_object(path);
       break;
     case BCONTEXT_MODIFIER:
-      found = buttons_context_path_modifier(path);
+      found = buttons_hypernova_context_path_modifier(path);
       break;
     case BCONTEXT_SHADERFX:
-      found = buttons_context_path_shaderfx(path);
+      found = buttons_hypernova_context_path_shaderfx(path);
       break;
     case BCONTEXT_DATA:
-      found = buttons_context_path_data(path, -1);
+      found = buttons_hypernova_context_path_data(path, -1);
       break;
     case BCONTEXT_PARTICLE:
-      found = buttons_context_path_particle(path);
+      found = buttons_hypernova_context_path_particle(path);
       break;
     case BCONTEXT_MATERIAL:
-      found = buttons_context_path_material(path);
+      found = buttons_hypernova_context_path_material(path);
       break;
     case BCONTEXT_TEXTURE:
-      found = buttons_context_path_texture(
+      found = buttons_hypernova_context_path_texture(
           C, path, static_cast<ButsContextTexture *>(sbuts->texuser));
       break;
     case BCONTEXT_BONE:
-      found = buttons_context_path_bone(path);
+      found = buttons_hypernova_context_path_bone(path);
       if (!found) {
-        found = buttons_context_path_data(path, OB_ARMATURE);
+        found = buttons_hypernova_context_path_data(path, OB_ARMATURE);
       }
       break;
     case BCONTEXT_BONE_CONSTRAINT:
-      found = buttons_context_path_pose_bone(path);
+      found = buttons_hypernova_context_path_pose_bone(path);
       break;
     default:
       found = false;
@@ -654,7 +647,7 @@ static bool buttons_context_path(
   return found;
 }
 
-static bool buttons_shading_context(const bContext *C, int mainb)
+static bool buttons_hypernova_shading_context(const bContext *C, int mainb)
 {
   wmWindow *window = CTX_wm_window(C);
   const Scene *scene = WM_window_get_active_scene(window);
@@ -672,7 +665,7 @@ static bool buttons_shading_context(const bContext *C, int mainb)
   return false;
 }
 
-static int buttons_shading_new_context(const bContext *C, int flag)
+static int buttons_hypernova_shading_new_context(const bContext *C, int flag)
 {
   wmWindow *window = CTX_wm_window(C);
   const Scene *scene = WM_window_get_active_scene(window);
@@ -693,7 +686,7 @@ static int buttons_shading_new_context(const bContext *C, int flag)
   return BCONTEXT_RENDER;
 }
 
-void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
+void buttons_hypernova_context_compute(const bContext *C, SpaceHypernova *sbuts)
 {
   if (!sbuts->path) {
     sbuts->path = MEM_new<ButsContextPath>("ButsContextPath");
@@ -705,33 +698,26 @@ void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
   int flag = 0;
 
   /* Set scene path. */
-  buttons_context_path(C, sbuts, path, BCONTEXT_SCENE, pflag);
+  buttons_hypernova_context_path(C, sbuts, path, BCONTEXT_SCENE, pflag);
 
-  buttons_texture_context_compute(C, sbuts);
+  buttons_hypernova_texture_context_compute(C, sbuts);
 
   /* for each context, see if we can compute a valid path to it, if
    * this is the case, we know we have to display the button */
   for (int i = 0; i < BCONTEXT_TOT; i++) {
-    if (buttons_context_path(C, sbuts, path, i, pflag)) {
+    if (buttons_hypernova_context_path(C, sbuts, path, i, pflag)) {
       flag |= (1 << i);
+      PointerRNA *ptr = &path->ptr[path->len - 1];
 
-      /* setting icon for data context */
-      if (i == BCONTEXT_DATA) {
-        PointerRNA *ptr = &path->ptr[path->len - 1];
-
-        if (ptr->type) {
-          if (RNA_struct_is_a(ptr->type, &RNA_Light)) {
-            sbuts->dataicon = ICON_OUTLINER_DATA_LIGHT;
-          }
-          else {
-            sbuts->dataicon = RNA_struct_ui_icon(ptr->type);
-          }
-        }
-        else {
-          sbuts->dataicon = ICON_EMPTY_DATA;
-        }
+      if (ptr->type) {
+        sbuts->dataicon = ICON_FREEZE;
       }
+      else {
+        sbuts->dataicon = ICON_EMPTY_DATA;
+      }
+
     }
+   
   }
 
   /* always try to use the tab that was explicitly
@@ -742,8 +728,8 @@ void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
   /* in case something becomes invalid, change */
   if ((flag & (1 << sbuts->mainb)) == 0) {
     if (sbuts->flag & SB_SHADING_CONTEXT) {
-      /* try to keep showing shading related buttons */
-      sbuts->mainb = buttons_shading_new_context(C, flag);
+      /* try to keep showing shading related buttons_hypernova */
+      sbuts->mainb = buttons_hypernova_shading_new_context(C, flag);
     }
     else if (flag & BCONTEXT_OBJECT) {
       sbuts->mainb = BCONTEXT_OBJECT;
@@ -758,7 +744,7 @@ void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
     }
   }
 
-  buttons_context_path(C, sbuts, path, sbuts->mainb, pflag);
+  buttons_hypernova_context_path(C, sbuts, path, sbuts->mainb, pflag);
 
   if (!(flag & (1 << sbuts->mainb))) {
     if (flag & (1 << BCONTEXT_OBJECT)) {
@@ -769,7 +755,7 @@ void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
     }
   }
 
-  if (buttons_shading_context(C, sbuts->mainb)) {
+  if (buttons_hypernova_shading_context(C, sbuts->mainb)) {
     sbuts->flag |= SB_SHADING_CONTEXT;
   }
   else {
@@ -790,7 +776,7 @@ static bool is_pointer_in_path(ButsContextPath *path, PointerRNA *ptr)
 }
 
 bool ED_buttons_should_sync_with_outliner(const bContext *C,
-                                          const SpaceProperties *sbuts,
+                                          const SpaceHypernova *sbuts,
                                           ScrArea *area)
 {
   ScrArea *active_area = CTX_wm_area(C);
@@ -800,12 +786,12 @@ bool ED_buttons_should_sync_with_outliner(const bContext *C,
 }
 
 void ED_buttons_set_context(const bContext *C,
-                            SpaceProperties *sbuts,
+                            SpaceHypernova *sbuts,
                             PointerRNA *ptr,
                             const int context)
 {
   ButsContextPath path;
-  if (buttons_context_path(C, sbuts, &path, context, 0) && is_pointer_in_path(&path, ptr)) {
+  if (buttons_hypernova_context_path(C, sbuts, &path, context, 0) && is_pointer_in_path(&path, ptr)) {
     sbuts->mainbuser = context;
     sbuts->mainb = sbuts->mainbuser;
   }
@@ -813,7 +799,7 @@ void ED_buttons_set_context(const bContext *C,
 
 /************************* Context Callback ************************/
 
-const char *buttons_context_dir[] = {
+const char *buttons_hypernova_context_dir[] = {
     "texture_slot",
     "scene",
     "world",
@@ -857,15 +843,15 @@ const char *buttons_context_dir[] = {
     nullptr,
 };
 
-int /*eContextResult*/ buttons_context(const bContext *C,
+int buttons_hypernova_context(const bContext *C,
                                        const char *member,
                                        bContextDataResult *result)
 {
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
   if (sbuts && sbuts->path == nullptr) {
     /* path is cleared for SCREEN_OT_redo_last, when global undo does a file-read which clears the
      * path (see lib_link_workspace_layout_restore). */
-    buttons_context_compute(C, sbuts);
+    buttons_hypernova_context_compute(C, sbuts);
   }
   ButsContextPath *path = static_cast<ButsContextPath *>(sbuts ? sbuts->path : nullptr);
 
@@ -882,16 +868,16 @@ int /*eContextResult*/ buttons_context(const bContext *C,
     /* in case of new shading system we skip texture_slot, complex python
      * UI script logic depends on checking if this is available */
     if (sbuts->texuser) {
-      CTX_data_dir_set(result, buttons_context_dir + 1);
+      CTX_data_dir_set(result, buttons_hypernova_context_dir + 1);
     }
     else {
-      CTX_data_dir_set(result, buttons_context_dir);
+      CTX_data_dir_set(result, buttons_hypernova_context_dir);
     }
     return CTX_RESULT_OK;
   }
   if (CTX_data_equals(member, "scene")) {
     /* Do not return one here if scene is not found in path,
-     * in this case we want to get default context scene! */
+     * in this case we want to get default context scene! */ 
     return set_pointer_type(path, result, &RNA_Scene);
   }
   if (CTX_data_equals(member, "world")) {
@@ -1185,15 +1171,15 @@ int /*eContextResult*/ buttons_context(const bContext *C,
 
 /************************* Drawing the Path ************************/
 
-static bool buttons_panel_context_poll(const bContext *C, PanelType * /*pt*/)
+static bool buttons_hypernova_panel_context_poll(const bContext *C, PanelType * /*pt*/)
 {
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
   return sbuts->mainb != BCONTEXT_TOOL;
 }
 
-static void buttons_panel_context_draw(const bContext *C, Panel *panel)
+static void buttons_hypernova_panel_context_draw(const bContext *C, Panel *panel)
 {
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
   ButsContextPath *path = static_cast<ButsContextPath *>(sbuts->path);
 
   if (!path) {
@@ -1239,7 +1225,8 @@ static void buttons_panel_context_draw(const bContext *C, Panel *panel)
     }
 
     /* Add icon and name. */
-    int icon = RNA_struct_ui_icon(ptr->type);
+    int icon = ICON_FREEZE;
+    printf("Your icon fucked by the struct ui icon\n");
     char namebuf[128];
     char *name = RNA_struct_name_get_alloc(ptr, namebuf, sizeof(namebuf), nullptr);
 
@@ -1264,25 +1251,25 @@ static void buttons_panel_context_draw(const bContext *C, Panel *panel)
   uiItemO(pin_row,
           "",
           (sbuts->flag & SB_PIN_CONTEXT) ? ICON_PINNED : ICON_UNPINNED,
-          "BUTTONS_OT_toggle_pin");
+          "buttons_hypernova_OT_toggle_pin");
 }
 
-void buttons_context_register(ARegionType *art)
+void buttons_hypernova_context_register(ARegionType *art)
 {
   PanelType *pt = static_cast<PanelType *>(
-      MEM_callocN(sizeof(PanelType), "spacetype buttons panel context"));
-  STRNCPY(pt->idname, "PROPERTIES_PT_context");
-  STRNCPY(pt->label, N_("Context")); /* XXX C panels unavailable through RNA bpy.types! */
-  STRNCPY(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
-  pt->poll = buttons_panel_context_poll;
-  pt->draw = buttons_panel_context_draw;
-  pt->flag = PANEL_TYPE_NO_HEADER | PANEL_TYPE_NO_SEARCH;
-  BLI_addtail(&art->paneltypes, pt);
+    MEM_callocN(sizeof(PanelType), "spacetype buttons panel context"));
+STRNCPY(pt->idname, "PROPERTIES_PT_context");
+STRNCPY(pt->label, N_("Context")); /* XXX C panels unavailable through RNA bpy.types! */
+STRNCPY(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
+pt->poll = buttons_hypernova_panel_context_poll;
+pt->draw = buttons_hypernova_panel_context_draw;
+pt->flag = PANEL_TYPE_NO_HEADER | PANEL_TYPE_NO_SEARCH;
+BLI_addtail(&art->paneltypes, pt);
 }
 
-ID *buttons_context_id_path(const bContext *C)
+ID *buttons_hypernova_context_id_path(const bContext *C)
 {
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
   ButsContextPath *path = static_cast<ButsContextPath *>(sbuts->path);
 
   if (path->len == 0) {

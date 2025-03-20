@@ -1604,6 +1604,17 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
+          if (space->spacetype == SPACE_HYPERNOVA) {
+            SpaceHypernova *space_hypernova = (SpaceHypernova *)space;
+            space_hypernova->outliner_sync = PROPERTIES_SYNC_AUTO;
+          }
+        }
+      }
+    }
+
     /* Ensure that new viscosity strength field is initialized correctly. */
     if (!DNA_struct_member_exists(fd->filesdna, "FluidModifierData", "float", "viscosity_value")) {
       LISTBASE_FOREACH (Object *, ob, &bmain->objects) {

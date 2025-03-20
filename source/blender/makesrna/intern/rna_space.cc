@@ -175,6 +175,11 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      ICON_PROPERTIES,
      "Properties",
      "Edit properties of active object and related data-blocks"},
+    {SPACE_HYPERNOVA,
+     "HYPERNOVA",
+     ICON_RESTRICT_RENDER_ON,
+     "Hypernova",
+     "Edit hypernova of active object and related data-blocks"},
     {SPACE_FILE, "FILE_BROWSER", ICON_FILEBROWSER, "File Browser", "Browse for files and assets"},
     {SPACE_SPREADSHEET,
      "SPREADSHEET",
@@ -507,7 +512,7 @@ static const EnumPropertyItem buttons_context_items[] = {
      ICON_CONSTRAINT_BONE,
      "Bone Constraints",
      "Bone Constraint Properties"},
-    {BCONTEXT_MATERIAL, "MATERIAL", ICON_MATERIAL, "Material", "Material Properties"},
+    {BCONTEXT_MATERIAL, "MATERIAL", ICON_FREEZE, "Material", "Material Properties"},
     {BCONTEXT_TEXTURE, "TEXTURE", ICON_TEXTURE, "Texture", "Texture Properties"},
     {BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle Properties"},
     {BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics Properties"},
@@ -515,6 +520,35 @@ static const EnumPropertyItem buttons_context_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+static const EnumPropertyItem buttons_hypernova_context_items[] = {
+    {BCONTEXT_TOOL, "TOOL", ICON_TOOL_SETTINGS, "Tool", "Active Tool and Workspace settings"},
+    {BCONTEXT_SCENE, "SCENE", ICON_SCENE_DATA, "Scene", "Scene Properties"},
+    {BCONTEXT_RENDER, "RENDER", ICON_SCENE, "Render", "Render Properties"},
+    {BCONTEXT_OUTPUT, "OUTPUT", ICON_OUTPUT, "Output", "Output Properties"},
+    {BCONTEXT_VIEW_LAYER, "VIEW_LAYER", ICON_RENDER_RESULT, "View Layer", "View Layer Properties"},
+    {BCONTEXT_WORLD, "WORLD", ICON_WORLD, "World", "World Properties"},
+    {BCONTEXT_COLLECTION, "COLLECTION", ICON_GROUP, "Collection", "Collection Properties"},
+    {BCONTEXT_OBJECT, "OBJECT", ICON_OBJECT_DATA, "Object", "Object Properties"},
+    {BCONTEXT_CONSTRAINT,
+     "CONSTRAINT",
+     ICON_CONSTRAINT,
+     "Constraints",
+     "Object Constraint Properties"},
+    {BCONTEXT_MODIFIER, "MODIFIER", ICON_MODIFIER, "Modifiers", "Modifier Properties"},
+    {BCONTEXT_DATA, "DATA", ICON_NONE, "Data", "Object Data Properties"},
+    {BCONTEXT_BONE, "BONE", ICON_BONE_DATA, "Bone", "Bone Properties"},
+    {BCONTEXT_BONE_CONSTRAINT,
+     "BONE_CONSTRAINT",
+     ICON_CONSTRAINT_BONE,
+     "Bone Constraints",
+     "Bone Constraint Properties"},
+    {BCONTEXT_MATERIAL, "MATERIAL", ICON_FREEZE, "Material", "Material Properties"},
+    {BCONTEXT_TEXTURE, "TEXTURE", ICON_TEXTURE, "Texture", "Texture Properties"},
+    {BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle Properties"},
+    {BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics Properties"},
+    {BCONTEXT_SHADERFX, "SHADERFX", ICON_SHADERFX, "Effects", "Visual Effects Properties"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
 static const EnumPropertyItem fileselectparams_recursion_level_items[] = {
     {0, "NONE", 0, "None", "Only list current directory's content, with no recursion"},
     {1, "BLEND", 0, "Blend File", "List .blend files' content"},
@@ -600,6 +634,8 @@ static StructRNA *rna_Space_refine(PointerRNA *ptr)
       return &RNA_SpaceOutliner;
     case SPACE_PROPERTIES:
       return &RNA_SpaceProperties;
+    case SPACE_HYPERNOVA:
+      return &RNA_SpaceHypernova;
     case SPACE_FILE:
       return &RNA_SpaceFileBrowser;
     case SPACE_IMAGE:
@@ -2169,6 +2205,178 @@ static void rna_SpaceProperties_search_filter_update(Main * /*bmain*/,
   ED_region_search_filter_update(area, main_region);
 }
 
+
+
+/* Space Hypernova */
+
+/* NOTE: this function exists only to avoid id reference-counting. */
+static void rna_SpaceHypernova_pin_id_set(PointerRNA *ptr,
+                                           PointerRNA value,
+                                           ReportList * /*reports*/)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+  sbuts->pinid = static_cast<ID *>(value.data);
+}
+
+static StructRNA *rna_SpaceHypernova_pin_id_typef(PointerRNA *ptr)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+
+  if (sbuts->pinid) {
+    return ID_code_to_RNA_type(GS(sbuts->pinid->name));
+  }
+
+  return &RNA_ID;
+}
+
+static void rna_SpaceHypernova_pin_id_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+  ID *id = sbuts->pinid;
+
+  if (id == nullptr) {
+    sbuts->flag &= ~SB_PIN_CONTEXT;
+    return;
+  }
+
+  switch (GS(id->name)) {
+    case ID_MA:
+      WM_main_add_notifier(NC_MATERIAL | ND_SHADING, nullptr);
+      break;
+    case ID_TE:
+      WM_main_add_notifier(NC_TEXTURE, nullptr);
+      break;
+    case ID_WO:
+      WM_main_add_notifier(NC_WORLD, nullptr);
+      break;
+    case ID_LA:
+      WM_main_add_notifier(NC_LAMP, nullptr);
+      break;
+    default:
+      break;
+  }
+}
+
+static void rna_SpaceHypernova_context_set(PointerRNA *ptr, int value)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+
+  sbuts->mainb = value;
+  sbuts->mainbuser = value;
+}
+
+static const EnumPropertyItem *rna_SpaceHypernova_context_itemf(bContext * /*C*/,
+                                                                 PointerRNA *ptr,
+                                                                 PropertyRNA * /*prop*/,
+                                                                 bool *r_free)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+  EnumPropertyItem *item = nullptr;
+
+  /* Although it would never reach this amount, a theoretical maximum number of tabs
+   * is BCONTEXT_TOT * 2, with every tab displayed and a spacer in every other item. */
+  short context_tabs_array[BCONTEXT_TOT * 2];
+  int totitem = ED_buttons_tabs_list(sbuts, context_tabs_array);
+  BLI_assert(totitem <= ARRAY_SIZE(context_tabs_array));
+
+  int totitem_added = 0;
+  bool add_separator = true;
+  for (int i = 0; i < totitem; i++) {
+    if (context_tabs_array[i] == -1) {
+      if (add_separator) {
+        RNA_enum_item_add_separator(&item, &totitem_added);
+        add_separator = false;
+      }
+      continue;
+    }
+
+    RNA_enum_items_add_value(&item, &totitem_added, buttons_context_items, context_tabs_array[i]);
+    add_separator = true;
+
+    /* Add the object data icon dynamically for the data tab. */
+    if (context_tabs_array[i] == BCONTEXT_DATA) {
+      (item + totitem_added - 1)->icon = sbuts->dataicon;
+    }
+  }
+
+  RNA_enum_item_end(&item, &totitem_added);
+  *r_free = true;
+
+  return item;
+}
+
+static void rna_SpaceHypernova_context_update(Main * /*bmain*/,
+                                               Scene * /*scene*/,
+                                               PointerRNA *ptr)
+{
+  SpaceHypernova *sbuts = (SpaceHypernova *)(ptr->data);
+  /* XXX BCONTEXT_DATA is ugly, but required for lights... See #51318. */
+  if (ELEM(sbuts->mainb, BCONTEXT_WORLD, BCONTEXT_MATERIAL, BCONTEXT_TEXTURE, BCONTEXT_DATA)) {
+    sbuts->preview = 1;
+  }
+}
+
+static int rna_SpaceHypernova_tab_search_results_getlength(const PointerRNA *ptr,
+                                                            int length[RNA_MAX_ARRAY_DIMENSION])
+{
+  SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(ptr->data);
+
+  short context_tabs_array[BCONTEXT_TOT * 2]; /* Dummy variable. */
+  const int tabs_len = ED_buttons_tabs_list(sbuts, context_tabs_array);
+
+  length[0] = tabs_len;
+
+  return length[0];
+}
+
+static void rna_SpaceHypernova_tab_search_results_get(PointerRNA *ptr, bool *values)
+{
+  SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(ptr->data);
+
+  short context_tabs_array[BCONTEXT_TOT * 2]; /* Dummy variable. */
+  const int tabs_len = ED_buttons_tabs_list(sbuts, context_tabs_array);
+
+  for (int i = 0; i < tabs_len; i++) {
+    values[i] = ED_buttons_tab_has_search_result(sbuts, i);
+  }
+}
+
+static void rna_SpaceHypernova_search_filter_get(PointerRNA *ptr, char *value)
+{
+  SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(ptr->data);
+  const char *search_filter = ED_buttons_search_string_get(sbuts);
+
+  strcpy(value, search_filter);
+}
+
+static int rna_SpaceHypernova_search_filter_length(PointerRNA *ptr)
+{
+  SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(ptr->data);
+
+  return ED_buttons_search_string_length(sbuts);
+}
+
+static void rna_SpaceHypernova_search_filter_set(PointerRNA *ptr, const char *value)
+{
+  SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(ptr->data);
+
+  ED_buttons_search_string_set(sbuts, value);
+}
+
+static void rna_SpaceHypernova_search_filter_update(Main * /*bmain*/,
+                                                     Scene * /*scene*/,
+                                                     PointerRNA *ptr)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+
+  /* Update the search filter flag for the main region with the panels. */
+  ARegion *main_region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  BLI_assert(main_region != nullptr);
+  ED_region_search_filter_update(area, main_region);
+}
+
+
+
 /* Space Console */
 static void rna_ConsoleLine_body_get(PointerRNA *ptr, char *value)
 {
@@ -3560,7 +3768,7 @@ static IDFilterEnumPropertyItem rna_enum_space_file_id_filter_categories[] = {
      "Show meshes, curves, lattice, armatures and metaballs data"},
     {FILTER_ID_LS | FILTER_ID_MA | FILTER_ID_NT | FILTER_ID_TE,
      "category_shading",
-     ICON_MATERIAL_DATA,
+     ICON_FREEZE,
      "Shading",
      "Show materials, node-trees, textures and Freestyle's line-styles"},
     {FILTER_ID_IM | FILTER_ID_MC | FILTER_ID_MSK | FILTER_ID_SO,
@@ -5625,7 +5833,7 @@ static void rna_def_space_properties(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ID);
   RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_PROPERTIES, "rna_SpaceProperties_context_update");
+      prop, NC_SPACE | ND_SPACE_PROPERTIES , "rna_SpaceProperties_context_update");
 
   /* pinned data */
   prop = RNA_def_property(srna, "pin_id", PROP_POINTER, PROP_NONE);
@@ -5637,6 +5845,7 @@ static void rna_def_space_properties(BlenderRNA *brna)
                                  "rna_SpaceProperties_pin_id_set",
                                  "rna_SpaceProperties_pin_id_typef",
                                  nullptr);
+  
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
   RNA_def_property_update(
       prop, NC_SPACE | ND_SPACE_PROPERTIES, "rna_SpaceProperties_pin_id_update");
@@ -5676,6 +5885,96 @@ static void rna_def_space_properties(BlenderRNA *brna)
                            "Outliner Sync",
                            "Change to the corresponding tab when outliner data icons are clicked");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+}
+
+
+static void rna_def_space_hypernova(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  static const EnumPropertyItem tab_sync_items[] = {
+      {PROPERTIES_SYNC_ALWAYS,
+       "ALWAYS",
+       0,
+       "Always",
+       "Always change tabs when clicking an icon in an outliner"},
+      {PROPERTIES_SYNC_NEVER,
+       "NEVER",
+       0,
+       "Never",
+       "Never change tabs when clicking an icon in an outliner"},
+      {PROPERTIES_SYNC_AUTO,
+       "AUTO",
+       0,
+       "Auto",
+       "Change tabs only when this editor shares a border with an outliner"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  srna = RNA_def_struct(brna, "SpaceHypernova", "Space");
+  RNA_def_struct_sdna(srna, "SpaceHypernova");
+  RNA_def_struct_ui_text(srna, "Hypernova Space", "Properties space data");
+
+  prop = RNA_def_property(srna, "context_hypernova", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "mainb");
+  RNA_def_property_enum_items(prop, buttons_hypernova_context_items);
+  RNA_def_property_enum_funcs(
+      prop, nullptr, "rna_SpaceHypernova_context_set", "rna_SpaceHypernova_context_itemf");
+  RNA_def_property_ui_text(prop, "", "");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ID);
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_HYPERNOVA, "rna_SpaceHypernova_context_update");
+
+  /* pinned data */
+  prop = RNA_def_property(srna, "pin_id", PROP_POINTER, PROP_NONE);
+  RNA_def_property_pointer_sdna(prop, nullptr, "pinid");
+  RNA_def_property_struct_type(prop, "ID");
+  /* NOTE: custom set function is ONLY to avoid rna setting a user for this. */
+  RNA_def_property_pointer_funcs(prop,
+                                 nullptr,
+                                 "rna_SpaceHypernova_pin_id_set",
+                                 "rna_SpaceHypernova_pin_id_typef",
+                                 nullptr);
+  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_HYPERNOVA, "rna_SpaceHypernova_pin_id_update");
+
+  prop = RNA_def_property(srna, "use_pin_id_hypernova", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SB_PIN_CONTEXT);
+  RNA_def_property_ui_text(prop, "Pin ID", "Use the pinned context");
+
+  /* Property search. */
+
+  prop = RNA_def_property(srna, "tab_search_results", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_array(prop, 0); /* Dynamic length, see next line. */
+  RNA_def_property_flag(prop, PROP_DYNAMIC);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_boolean_funcs(prop, "rna_SpaceHypernova_tab_search_results_get", nullptr);
+  RNA_def_property_dynamic_array_funcs(prop, "rna_SpaceHypernova_tab_search_results_getlength");
+  RNA_def_property_ui_text(
+      prop, "Tab Search Results", "Whether or not each visible tab has a search result");
+
+  prop = RNA_def_property(srna, "search_filter", PROP_STRING, PROP_NONE);
+  /* The search filter is stored in the property editor's runtime which
+   * is only defined in an internal header, so use the getter / setter here. */
+  RNA_def_property_string_funcs(prop,
+                                "rna_SpaceHypernova_search_filter_get",
+                                "rna_SpaceHypernova_search_filter_length",
+                                "rna_SpaceHypernova_search_filter_set");
+  RNA_def_property_ui_text(prop, "Display Filter", "Live search filtering string");
+  RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
+  RNA_def_property_update(
+      prop, NC_SPACE | ND_SPACE_HYPERNOVA, "rna_SpaceHypernova_search_filter_update");
+
+  /* Outliner sync. */
+  prop = RNA_def_property(srna, "outliner_sync", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "outliner_sync");
+  RNA_def_property_enum_items(prop, tab_sync_items);
+  RNA_def_property_ui_text(prop,
+                           "Outliner Sync",
+                           "Change to the corresponding tab when outliner data icons are clicked");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_HYPERNOVA, nullptr);
 }
 
 static void rna_def_space_image_overlay(BlenderRNA *brna)
@@ -8633,6 +8932,7 @@ void RNA_def_space(BlenderRNA *brna)
   rna_def_space_outliner(brna);
   rna_def_space_view3d(brna);
   rna_def_space_properties(brna);
+  rna_def_space_hypernova(brna);
   rna_def_space_dopesheet(brna);
   rna_def_space_graph(brna);
   rna_def_space_nla(brna);

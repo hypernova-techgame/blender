@@ -371,6 +371,13 @@ static void area_add_window_regions(ScrArea *area, SpaceLink *sl, ListBase *lb)
         region->v2d.scroll |= (V2D_SCROLL_RIGHT | V2D_SCROLL_BOTTOM);
         break;
       }
+      case SPACE_HYPERNOVA: {
+        SpaceHypernova *sbuts = (SpaceHypernova *)sl;
+        memcpy(&region->v2d, &sbuts->v2d, sizeof(View2D));
+
+        region->v2d.scroll |= (V2D_SCROLL_RIGHT | V2D_SCROLL_BOTTOM);
+        break;
+      }
       case SPACE_FILE: {
         // SpaceFile *sfile = (SpaceFile *)sl;
         region->v2d.tot.xmin = region->v2d.tot.ymin = 0;
