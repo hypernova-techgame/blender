@@ -2181,7 +2181,7 @@ static void draw_property_for_socket(const bContext &C,
       break;
     }
     case SOCK_MATERIAL: {
-      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "materials", name, ICON_FREEZE);
+      uiItemPointerR(row, md_ptr, rna_path, bmain_ptr, "materials", name, ICON_MATERIAL);
       break;
     }
     case SOCK_TEXTURE: {

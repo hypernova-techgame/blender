@@ -186,6 +186,16 @@ int ED_buttons_tabs_list(SpaceHypernova *sbuts, short *context_tabs_array)
     context_tabs_array[length] = BCONTEXT_WORLD;
     length++;
   }
+
+  context_tabs_array[length] = BCONTEXT_EXPORTER;
+  length++;
+
+  context_tabs_array[length] = BCONTEXT_UTILS;
+  length++;
+
+  context_tabs_array[length] = BCONTEXT_MATERIAL_DETAILS;
+  length++;
+
   if (sbuts->pathflag & (1 << BCONTEXT_COLLECTION)) {
     if (length != 0) {
       context_tabs_array[length] = -1;
@@ -210,22 +220,7 @@ int ED_buttons_tabs_list(SpaceHypernova *sbuts, short *context_tabs_array)
     context_tabs_array[length] = BCONTEXT_SHADERFX;
     length++;
   }
-  if (sbuts->pathflag & (1 << BCONTEXT_PARTICLE)) {
-    context_tabs_array[length] = BCONTEXT_PARTICLE;
-    length++;
-  }
-  if (sbuts->pathflag & (1 << BCONTEXT_PHYSICS)) {
-    context_tabs_array[length] = BCONTEXT_PHYSICS;
-    length++;
-  }
-  if (sbuts->pathflag & (1 << BCONTEXT_CONSTRAINT)) {
-    context_tabs_array[length] = BCONTEXT_CONSTRAINT;
-    length++;
-  }
-  if (sbuts->pathflag & (1 << BCONTEXT_DATA)) {
-    context_tabs_array[length] = BCONTEXT_DATA;
-    length++;
-  }
+  
   if (sbuts->pathflag & (1 << BCONTEXT_BONE)) {
     context_tabs_array[length] = BCONTEXT_BONE;
     length++;
@@ -253,42 +248,24 @@ int ED_buttons_tabs_list(SpaceHypernova *sbuts, short *context_tabs_array)
 static const char *buttons_hypernova_main_region_context_string(const short mainb)
 {
   switch (mainb) { 
-    case BCONTEXT_SCENE:
-      return "hypernova_scene";
-    case BCONTEXT_RENDER:
-      return "hypernova_render";
-    case BCONTEXT_OUTPUT:
-      return "hypernova_output";
-    case BCONTEXT_VIEW_LAYER:
-      return "view_layer";
-    case BCONTEXT_WORLD:
-      return "world";
-    case BCONTEXT_COLLECTION:
-      return "collection";
-    case BCONTEXT_OBJECT:
-      return "object";
-    case BCONTEXT_DATA:
-      return "data";
-    case BCONTEXT_MATERIAL:
-      return "material";
-    case BCONTEXT_TEXTURE:
-      return "texture";
-    case BCONTEXT_PARTICLE:
-      return "particle";
-    case BCONTEXT_PHYSICS:
-      return "physics";
-    case BCONTEXT_BONE:
-      return "bone";
-    case BCONTEXT_MODIFIER:
-      return "modifier";
-    case BCONTEXT_SHADERFX:
-      return "shaderfx";
-    case BCONTEXT_CONSTRAINT:
-      return "constraint";
-    case BCONTEXT_BONE_CONSTRAINT:
-      return "bone_constraint";
     case BCONTEXT_TOOL:
-      return "tool";
+      return "hypernova_dynamic_model_database"; 
+    case BCONTEXT_RENDER:
+      return "hypernova_model_segmentation"; 
+    case BCONTEXT_OUTPUT:
+      return "hypernova_pivot_point"; 
+    case BCONTEXT_VIEW_LAYER:
+      return "hypernova_additional_data"; 
+    case BCONTEXT_SCENE:
+      return "hypernova_primitive_collider"; 
+    case BCONTEXT_WORLD:
+      return "hypernova_texture_painting";
+    case BCONTEXT_EXPORTER:
+      return "hypernova_exporter";
+    case BCONTEXT_UTILS:
+      return "hypernova_utils";
+    case BCONTEXT_MATERIAL_DETAILS:
+      return "hypernova_material_details";
   }
 
   /* All the cases should be handled. */
@@ -501,14 +478,8 @@ static void buttons_hypernova_main_region_layout(const bContext *C, ARegion *reg
 {
   /* draw entirely, view changes should be handled here */
   SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
-
-  if (sbuts->mainb == BCONTEXT_TOOL) {
-    ED_view3d_buttons_region_layout_ex(C, region, "Tool");
-  }
-  else {
-    buttons_hypernova_main_region_layout_properties(C, sbuts, region);
-  }
-
+  buttons_hypernova_main_region_layout_properties(C, sbuts, region);
+   
   if (region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE) {
     buttons_hypernova_main_region_property_search(C, sbuts, region);
   }
@@ -584,7 +555,7 @@ static void buttons_hypernova_header_region_message_subscribe(const wmRegionMess
    * where one has no active object, so that available contexts changes. */
   WM_msg_subscribe_rna_anon_prop(mbus, Window, view_layer, &msg_sub_value_region_tag_redraw);
 
-  if (!ELEM(sbuts->mainb, BCONTEXT_RENDER, BCONTEXT_OUTPUT, BCONTEXT_SCENE, BCONTEXT_WORLD)) {
+  if (!ELEM(sbuts->mainb, BCONTEXT_RENDER, BCONTEXT_EXPORTER,BCONTEXT_UTILS,BCONTEXT_MATERIAL_DETAILS, BCONTEXT_OUTPUT, BCONTEXT_SCENE, BCONTEXT_WORLD)) {
     WM_msg_subscribe_rna_anon_prop(mbus, ViewLayer, name, &msg_sub_value_region_tag_redraw);
   }
 
@@ -671,8 +642,11 @@ static void buttons_hypernova_area_listener(const wmSpaceTypeListenerParams *par
       switch (wmn->data) {
         case ND_RENDER_OPTIONS:
           buttons_hypernova_area_redraw(area, BCONTEXT_RENDER);
+          buttons_hypernova_area_redraw(area, BCONTEXT_EXPORTER); 
+          buttons_hypernova_area_redraw(area, BCONTEXT_UTILS);
+          buttons_hypernova_area_redraw(area, BCONTEXT_MATERIAL_DETAILS);
           buttons_hypernova_area_redraw(area, BCONTEXT_OUTPUT);
-          buttons_hypernova_area_redraw(area, BCONTEXT_VIEW_LAYER);
+          buttons_hypernova_area_redraw(area, BCONTEXT_VIEW_LAYER);  
           break;
         case ND_WORLD:
           buttons_hypernova_area_redraw(area, BCONTEXT_WORLD);

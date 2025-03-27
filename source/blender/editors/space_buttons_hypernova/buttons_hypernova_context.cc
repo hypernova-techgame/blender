@@ -46,8 +46,7 @@
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
-#include "WM_api.hh"
-#include "CLG_log.h"
+#include "WM_api.hh" 
 #include "buttons_hypernova_intern.hh" /* own include */
 
 static int set_pointer_type(ButsContextPath *path, bContextDataResult *result, StructRNA *type)
@@ -91,12 +90,6 @@ static bool buttons_hypernova_context_path_view_layer(ButsContextPath *path, wmW
 {
   PointerRNA *ptr = &path->ptr[path->len - 1];
 
-  /* View Layer may have already been resolved in a previous call
-   * (e.g. in buttons_hypernova_context_path_linestyle). */
-  if (RNA_struct_is_a(ptr->type, &RNA_ViewLayer)) {
-    return true;
-  }
-
   if (buttons_hypernova_context_path_scene(path)) {
     Scene *scene = static_cast<Scene *>(path->ptr[path->len - 1].data);
     ViewLayer *view_layer = (win->scene == scene) ? WM_window_get_active_view_layer(win) :
@@ -109,6 +102,7 @@ static bool buttons_hypernova_context_path_view_layer(ButsContextPath *path, wmW
 
   return false;
 }
+
 
 /* NOTE: this function can return true without adding a world to the path
  * so the buttons_hypernova stay visible, but be sure to check the ID type if a ID_WO */
@@ -171,28 +165,6 @@ static bool buttons_hypernova_context_path_collection(const bContext *C,
   }
 
   /* no path to a collection possible */
-  return false;
-}
-
-static bool buttons_hypernova_context_path_linestyle(ButsContextPath *path, wmWindow *window)
-{ 
-  PointerRNA *ptr = &path->ptr[path->len - 1];
-
-  /* if we already have a (pinned) linestyle, we're done */
-  if (RNA_struct_is_a(ptr->type, &RNA_FreestyleLineStyle)) {
-    return true;
-  }
-  /* if we have a view layer, use the lineset's linestyle */
-  if (buttons_hypernova_context_path_view_layer(path, window)) {
-    ViewLayer *view_layer = static_cast<ViewLayer *>(path->ptr[path->len - 1].data);
-    FreestyleLineStyle *linestyle = BKE_linestyle_active_from_view_layer(view_layer);
-    if (linestyle) {
-      path->ptr[path->len] = RNA_id_pointer_create(&linestyle->id);
-      path->len++;
-      return true;
-    }
-  } 
-  /* no path to a linestyle possible */
   return false;
 }
 
@@ -504,9 +476,7 @@ static bool buttons_hypernova_context_path_texture(const bContext *C,
     else if (GS(id->name) == ID_OB) {
       buttons_hypernova_context_path_object(path);
     }
-    else if (GS(id->name) == ID_LS) {
-      buttons_hypernova_context_path_linestyle(path, CTX_wm_window(C));
-    }
+    
   }
 
   if (ct->texture) {
@@ -516,30 +486,6 @@ static bool buttons_hypernova_context_path_texture(const bContext *C,
 
   return true;
 }
-
-#ifdef WITH_FREESTYLE
-static bool buttons_hypernova_context_linestyle_pinnable(const bContext *C, ViewLayer *view_layer)
-{
-  wmWindow *window = CTX_wm_window(C);
-  Scene *scene = WM_window_get_active_scene(window);
-
-  /* if Freestyle is disabled in the scene */
-  if ((scene->r.mode & R_EDGE_FRS) == 0) {
-    return false;
-  }
-  /* if Freestyle is not in the Parameter Editor mode */
-  FreestyleConfig *config = &view_layer->freestyle_config;
-  if (config->mode != FREESTYLE_CONTROL_EDITOR_MODE) {
-    return false;
-  }
-  /* if the scene has already been pinned */
-  SpaceHypernova *sbuts = CTX_wm_space_hypernova(C);
-  if (sbuts->pinid && sbuts->pinid == &scene->id) {
-    return false;
-  }
-  return true;
-}
-#endif
 
 static bool buttons_hypernova_context_path(
     const bContext *C, SpaceHypernova *sbuts, ButsContextPath *path, int mainb, int flag)
@@ -568,6 +514,9 @@ static bool buttons_hypernova_context_path(
     if (!ELEM(mainb,
               BCONTEXT_SCENE,
               BCONTEXT_RENDER,
+              BCONTEXT_EXPORTER,
+              BCONTEXT_UTILS,
+              BCONTEXT_MATERIAL_DETAILS,
               BCONTEXT_OUTPUT,
               BCONTEXT_VIEW_LAYER,
               BCONTEXT_WORLD))
@@ -583,18 +532,13 @@ static bool buttons_hypernova_context_path(
   switch (mainb) {
     case BCONTEXT_SCENE:
     case BCONTEXT_RENDER:
+    case BCONTEXT_EXPORTER:
+    case BCONTEXT_UTILS:
+    case BCONTEXT_MATERIAL_DETAILS:
     case BCONTEXT_OUTPUT:
       found = buttons_hypernova_context_path_scene(path);
       break;
     case BCONTEXT_VIEW_LAYER:
-#ifdef WITH_FREESTYLE
-      if (buttons_hypernova_context_linestyle_pinnable(C, view_layer)) {
-        found = buttons_hypernova_context_path_linestyle(path, window);
-        if (found) {
-          break;
-        }
-      }
-#endif
       found = buttons_hypernova_context_path_view_layer(path, window);
       break;
     case BCONTEXT_WORLD:
@@ -749,6 +693,7 @@ void buttons_hypernova_context_compute(const bContext *C, SpaceHypernova *sbuts)
   if (!(flag & (1 << sbuts->mainb))) {
     if (flag & (1 << BCONTEXT_OBJECT)) {
       sbuts->mainb = BCONTEXT_OBJECT;
+      sbuts->dataicon = ICON_FREEZE;
     }
     else {
       sbuts->mainb = BCONTEXT_SCENE;
@@ -1196,20 +1141,28 @@ static void buttons_hypernova_panel_context_draw(const bContext *C, Panel *panel
     /* Skip scene and view layer to save space. */
     if (!ELEM(sbuts->mainb,
               BCONTEXT_RENDER,
+              BCONTEXT_EXPORTER,
+              BCONTEXT_UTILS,
+              BCONTEXT_MATERIAL_DETAILS,
               BCONTEXT_OUTPUT,
               BCONTEXT_SCENE,
               BCONTEXT_VIEW_LAYER,
-              BCONTEXT_WORLD) &&
+              BCONTEXT_WORLD
+              ) &&
         ptr->type == &RNA_Scene)
     {
       continue;
     }
     if (!ELEM(sbuts->mainb,
               BCONTEXT_RENDER,
+              BCONTEXT_EXPORTER,
+              BCONTEXT_UTILS,
+              BCONTEXT_MATERIAL_DETAILS,
               BCONTEXT_OUTPUT,
               BCONTEXT_SCENE,
               BCONTEXT_VIEW_LAYER,
-              BCONTEXT_WORLD) &&
+              BCONTEXT_WORLD
+             ) &&
         ptr->type == &RNA_ViewLayer)
     {
       continue;
@@ -1225,8 +1178,7 @@ static void buttons_hypernova_panel_context_draw(const bContext *C, Panel *panel
     }
 
     /* Add icon and name. */
-    int icon = ICON_FREEZE;
-    printf("Your icon fucked by the struct ui icon\n");
+    int icon = RNA_struct_ui_icon(ptr->type);
     char namebuf[128];
     char *name = RNA_struct_name_get_alloc(ptr, namebuf, sizeof(namebuf), nullptr);
 

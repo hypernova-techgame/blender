@@ -751,7 +751,7 @@ static void draw_property_for_socket(const bNodeTree &node_tree,
           row, op_ptr, rna_path, bmain_ptr, "collections", name, ICON_OUTLINER_COLLECTION);
       break;
     case SOCK_MATERIAL:
-      uiItemPointerR(row, op_ptr, rna_path, bmain_ptr, "materials", name, ICON_FREEZE);
+      uiItemPointerR(row, op_ptr, rna_path, bmain_ptr, "materials", name, ICON_MATERIAL);
       break;
     case SOCK_TEXTURE:
       uiItemPointerR(row, op_ptr, rna_path, bmain_ptr, "textures", name, ICON_TEXTURE);

@@ -177,7 +177,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      "Edit properties of active object and related data-blocks"},
     {SPACE_HYPERNOVA,
      "HYPERNOVA",
-     ICON_RESTRICT_RENDER_ON,
+     ICON_AIRCRAFT_HYPERNOVA,
      "Hypernova",
      "Edit hypernova of active object and related data-blocks"},
     {SPACE_FILE, "FILE_BROWSER", ICON_FILEBROWSER, "File Browser", "Browse for files and assets"},
@@ -512,7 +512,7 @@ static const EnumPropertyItem buttons_context_items[] = {
      ICON_CONSTRAINT_BONE,
      "Bone Constraints",
      "Bone Constraint Properties"},
-    {BCONTEXT_MATERIAL, "MATERIAL", ICON_FREEZE, "Material", "Material Properties"},
+    {BCONTEXT_MATERIAL, "MATERIAL", ICON_MATERIAL, "Material", "Material Properties"},
     {BCONTEXT_TEXTURE, "TEXTURE", ICON_TEXTURE, "Texture", "Texture Properties"},
     {BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle Properties"},
     {BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics Properties"},
@@ -521,32 +521,16 @@ static const EnumPropertyItem buttons_context_items[] = {
 };
 
 static const EnumPropertyItem buttons_hypernova_context_items[] = {
-    {BCONTEXT_TOOL, "TOOL", ICON_TOOL_SETTINGS, "Tool", "Active Tool and Workspace settings"},
-    {BCONTEXT_SCENE, "SCENE", ICON_SCENE_DATA, "Scene", "Scene Properties"},
-    {BCONTEXT_RENDER, "RENDER", ICON_SCENE, "Render", "Render Properties"},
-    {BCONTEXT_OUTPUT, "OUTPUT", ICON_OUTPUT, "Output", "Output Properties"},
-    {BCONTEXT_VIEW_LAYER, "VIEW_LAYER", ICON_RENDER_RESULT, "View Layer", "View Layer Properties"},
-    {BCONTEXT_WORLD, "WORLD", ICON_WORLD, "World", "World Properties"},
-    {BCONTEXT_COLLECTION, "COLLECTION", ICON_GROUP, "Collection", "Collection Properties"},
-    {BCONTEXT_OBJECT, "OBJECT", ICON_OBJECT_DATA, "Object", "Object Properties"},
-    {BCONTEXT_CONSTRAINT,
-     "CONSTRAINT",
-     ICON_CONSTRAINT,
-     "Constraints",
-     "Object Constraint Properties"},
-    {BCONTEXT_MODIFIER, "MODIFIER", ICON_MODIFIER, "Modifiers", "Modifier Properties"},
-    {BCONTEXT_DATA, "DATA", ICON_NONE, "Data", "Object Data Properties"},
-    {BCONTEXT_BONE, "BONE", ICON_BONE_DATA, "Bone", "Bone Properties"},
-    {BCONTEXT_BONE_CONSTRAINT,
-     "BONE_CONSTRAINT",
-     ICON_CONSTRAINT_BONE,
-     "Bone Constraints",
-     "Bone Constraint Properties"},
-    {BCONTEXT_MATERIAL, "MATERIAL", ICON_FREEZE, "Material", "Material Properties"},
-    {BCONTEXT_TEXTURE, "TEXTURE", ICON_TEXTURE, "Texture", "Texture Properties"},
-    {BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle Properties"},
-    {BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics Properties"},
-    {BCONTEXT_SHADERFX, "SHADERFX", ICON_SHADERFX, "Effects", "Visual Effects Properties"},
+    {BCONTEXT_TOOL, "TOOL", ICON_HYPERNOVA_DYNAMIC_MODEL_DATABASE, "Model Database", "Model Database Hypernova"},//1
+    {BCONTEXT_RENDER, "RENDER", ICON_HYPERNOVA_MODEL_SEGMENTATION, "Model Segmentation", "Model Segmentation Hypernova"},//2
+    {BCONTEXT_OUTPUT, "OUTPUT", ICON_HYPERNOVA_PIVOT_POINT, "Pivot Point", "Pivot Point Hypernova"},//3
+    {BCONTEXT_VIEW_LAYER, "VIEW_LAYER", ICON_HYPERNOVA_ADDITIONAL_DATA, "Additional Data", "Additional Data Hypernova"}, //4
+    {BCONTEXT_SCENE, "SCENE", ICON_HYPERNOVA_PRIMITIVE_COLLIDER, "Primitive Collider", "Primitive Collider Hypernova"}, //5
+    {BCONTEXT_WORLD, "WORLD", ICON_HYPERNOVA_TEXTURE_PAINTING, "Texture Painting", "Texture Painting Hypernova"}, //6
+    {BCONTEXT_EXPORTER, "EXPORTER", ICON_HYPERNOVA_EXPORTER, "Exporter", "Exporter Hypernova"}, //7
+    {BCONTEXT_UTILS, "UTILS", ICON_HYPERNOVA_UTILITIES, "Utils", "Utils Hypernova"}, //8
+    {BCONTEXT_MATERIAL_DETAILS, "MATERIAL_DETAILS", ICON_UV_DATA, "Material Details", "Material Details Hypernova"}, //9
+    {BCONTEXT_DATA, "DATA", ICON_HANDLE_AUTO, "Exporter", "Exporter Hypernova"}, //10
     {0, nullptr, 0, nullptr, nullptr},
 };
 static const EnumPropertyItem fileselectparams_recursion_level_items[] = {
@@ -2290,7 +2274,7 @@ static const EnumPropertyItem *rna_SpaceHypernova_context_itemf(bContext * /*C*/
       continue;
     }
 
-    RNA_enum_items_add_value(&item, &totitem_added, buttons_context_items, context_tabs_array[i]);
+    RNA_enum_items_add_value(&item, &totitem_added, buttons_hypernova_context_items, context_tabs_array[i]);
     add_separator = true;
 
     /* Add the object data icon dynamically for the data tab. */

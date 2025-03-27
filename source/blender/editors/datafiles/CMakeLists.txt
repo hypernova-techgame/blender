@@ -185,6 +185,7 @@ if(WITH_BLENDER)
       action_slot
       action_tweak
       add
+      aircraft_hypernova
       aliased
       align_bottom
       align_center
@@ -420,6 +421,14 @@ if(WITH_BLENDER)
       holdout_on
       home
       hook
+      hypernova_dynamic_model_database
+      hypernova_pivot_point
+      hypernova_additional_data
+      hypernova_primitive_collider
+      hypernova_texture_painting
+      hypernova_exporter
+      hypernova_utilities
+      hypernova_model_segmentation
       image
       image_alpha
       image_background
