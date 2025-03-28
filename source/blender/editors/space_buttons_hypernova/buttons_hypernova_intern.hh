@@ -86,14 +86,14 @@ extern "C" const char *buttons_hypernova_context_dir[]; /* doc access */
 
 void buttons_hypernova_texture_context_compute(const bContext *C, SpaceHypernova *sbuts);
 
-/* `buttons_hypernova_ops.cc` */
+/* `buttons_hypernova_ops.cc` */  
 
-void buttons_hypernova_OT_start_filter(wmOperatorType *ot);
-void buttons_hypernova_OT_clear_filter(wmOperatorType *ot);
-void buttons_hypernova_OT_toggle_pin(wmOperatorType *ot);
-void buttons_hypernova_OT_file_browse(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_start_filter(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_clear_filter(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_toggle_pin(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_file_browse(wmOperatorType *ot);
 /**
- * Second operator, only difference from #buttons_hypernova_OT_file_browse is #WM_FILESEL_DIRECTORY.
+ * Second operator, only difference from #BUTTONS_HYPERNOVA_OT_file_browse is #WM_FILESEL_DIRECTORY.
  */
-void buttons_hypernova_OT_directory_browse(wmOperatorType *ot);
-void buttons_hypernova_OT_context_menu(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_directory_browse(wmOperatorType *ot);
+void BUTTONS_HYPERNOVA_OT_context_menu(wmOperatorType *ot);

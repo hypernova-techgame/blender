@@ -1386,6 +1386,8 @@ url_manual_mapping = (
     ("bpy.types.spaceoutliner.use_sync_select*", "editors/outliner/interface.html#bpy-types-spaceoutliner-use-sync-select"),
     ("bpy.types.spaceproperties.outliner_sync*", "editors/properties_editor.html#bpy-types-spaceproperties-outliner-sync"),
     ("bpy.types.spaceproperties.search_filter*", "editors/properties_editor.html#bpy-types-spaceproperties-search-filter"),
+    ("bpy.types.spacehypernova.outliner_sync*", "editors/properties_editor.html#bpy-types-spacehypernova-outliner-sync"),
+    ("bpy.types.spacehypernova.search_filter*", "editors/properties_editor.html#bpy-types-spacehypernova-search-filter"),
     ("bpy.types.spacesequenceeditor.view_type*", "editors/video_sequencer/introduction.html#bpy-types-spacesequenceeditor-view-type"),
     ("bpy.types.spacetexteditor.margin_column*", "editors/text_editor.html#bpy-types-spacetexteditor-margin-column"),
     ("bpy.types.spacetexteditor.use_find_wrap*", "editors/text_editor.html#bpy-types-spacetexteditor-use-find-wrap"),

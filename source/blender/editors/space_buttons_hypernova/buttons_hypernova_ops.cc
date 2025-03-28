@@ -57,12 +57,12 @@ static int buttons_hypernova_start_filter_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-void buttons_hypernova_OT_start_filter(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_start_filter(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Filter";
   ot->description = "Start entering filter text";
-  ot->idname = "buttons_hypernova_OT_start_filter";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_start_filter";
 
   /* Callbacks. */
   ot->exec = buttons_hypernova_start_filter_exec;
@@ -82,12 +82,12 @@ static int buttons_hypernova_clear_filter_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-void buttons_hypernova_OT_clear_filter(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_clear_filter(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Clear Filter";
   ot->description = "Clear the search filter";
-  ot->idname = "buttons_hypernova_OT_clear_filter";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_clear_filter";
 
   /* Callbacks. */
   ot->exec = buttons_hypernova_clear_filter_exec;
@@ -121,12 +121,12 @@ static int toggle_pin_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-void buttons_hypernova_OT_toggle_pin(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_toggle_pin(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Toggle Pin ID";
   ot->description = "Keep the current data-block displayed";
-  ot->idname = "buttons_hypernova_OT_toggle_pin";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_toggle_pin";
 
   /* Callbacks. */
   ot->exec = toggle_pin_exec;
@@ -150,12 +150,12 @@ static int context_menu_invoke(bContext *C, wmOperator * /*op*/, const wmEvent *
   return OPERATOR_INTERFACE;
 }
 
-void buttons_hypernova_OT_context_menu(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_context_menu(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Context Menu";
   ot->description = "Display properties editor context_menu";
-  ot->idname = "buttons_hypernova_OT_context_menu";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_context_menu";
 
   /* Callbacks. */
   ot->invoke = context_menu_invoke;
@@ -396,13 +396,13 @@ static int file_browse_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   return OPERATOR_RUNNING_MODAL;
 }
 
-void buttons_hypernova_OT_file_browse(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_file_browse(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Accept";
   ot->description =
       "Open a file browser, hold Shift to open the file, Alt to browse containing directory";
-  ot->idname = "buttons_hypernova_OT_file_browse";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_file_browse";
 
   /* Callbacks. */
   ot->invoke = file_browse_invoke;
@@ -422,13 +422,13 @@ void buttons_hypernova_OT_file_browse(wmOperatorType *ot)
                                  FILE_SORT_DEFAULT);
 }
 
-void buttons_hypernova_OT_directory_browse(wmOperatorType *ot)
+void BUTTONS_HYPERNOVA_OT_directory_browse(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Accept";
   ot->description =
       "Open a directory browser, hold Shift to open the file, Alt to browse containing directory";
-  ot->idname = "buttons_hypernova_OT_directory_browse";
+  ot->idname = "BUTTONS_HYPERNOVA_OT_directory_browse";
 
   /* api callbacks */
   ot->invoke = file_browse_invoke;

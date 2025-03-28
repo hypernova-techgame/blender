@@ -1203,7 +1203,7 @@ static void buttons_hypernova_panel_context_draw(const bContext *C, Panel *panel
   uiItemO(pin_row,
           "",
           (sbuts->flag & SB_PIN_CONTEXT) ? ICON_PINNED : ICON_UNPINNED,
-          "buttons_hypernova_OT_toggle_pin");
+          "BUTTONS_HYPERNOVA_OT_toggle_pin");
 }
 
 void buttons_hypernova_context_register(ARegionType *art)

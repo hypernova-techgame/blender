@@ -45,7 +45,7 @@
 DNA_STRUCT_RENAME(Lamp, Light)
 DNA_STRUCT_RENAME(SeqRetimingHandle, SeqRetimingKey)
 DNA_STRUCT_RENAME(SpaceButs, SpaceProperties)
-DNA_STRUCT_RENAME(SpaceHypernova, SpaceHypernova)
+//DNA_STRUCT_RENAME(SpaceX, SpaceHypernova) No need to rename for the storage 
 DNA_STRUCT_RENAME(SpaceIpo, SpaceGraph)
 DNA_STRUCT_RENAME(SpaceOops, SpaceOutliner)
 DNA_STRUCT_RENAME_MEMBER(BPoint, alfa, tilt)

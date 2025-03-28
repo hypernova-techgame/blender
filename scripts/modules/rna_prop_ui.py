@@ -34,7 +34,7 @@ def rna_idprop_ui_prop_clear(item, prop):
 def rna_idprop_context_value(context, context_member, property_type):
     space = context.space_data
 
-    if space is None or isinstance(space, bpy.types.SpaceProperties):
+    if space is None or isinstance(space, bpy.types.SpaceProperties) or isinstance(space, bpy.types.SpaceHypernova):
         pin_id = space.pin_id
     else:
         pin_id = None

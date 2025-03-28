@@ -266,6 +266,30 @@ static const char *buttons_hypernova_main_region_context_string(const short main
       return "hypernova_utils";
     case BCONTEXT_MATERIAL_DETAILS:
       return "hypernova_material_details";
+    case BCONTEXT_COLLECTION:
+      return "collection";
+    case BCONTEXT_OBJECT:
+      return "object";
+    case BCONTEXT_DATA:
+      return "data";
+    case BCONTEXT_MATERIAL:
+      return "material";
+    case BCONTEXT_TEXTURE:
+      return "texture";
+    case BCONTEXT_PARTICLE:
+      return "particle";
+    case BCONTEXT_PHYSICS:
+      return "physics";
+    case BCONTEXT_BONE:
+      return "bone";
+    case BCONTEXT_MODIFIER:
+      return "modifier";
+    case BCONTEXT_SHADERFX:
+      return "shaderfx";
+    case BCONTEXT_CONSTRAINT:
+      return "constraint";
+    case BCONTEXT_BONE_CONSTRAINT:
+      return "bone_constraint";
   }
 
   /* All the cases should be handled. */
@@ -504,12 +528,12 @@ static void buttons_hypernova_main_region_listener(const wmRegionListenerParams 
 
 static void buttons_hypernova_operatortypes()
 {
-  WM_operatortype_append(buttons_hypernova_OT_start_filter);
-  WM_operatortype_append(buttons_hypernova_OT_clear_filter);
-  WM_operatortype_append(buttons_hypernova_OT_toggle_pin);
-  WM_operatortype_append(buttons_hypernova_OT_context_menu);
-  WM_operatortype_append(buttons_hypernova_OT_file_browse);
-  WM_operatortype_append(buttons_hypernova_OT_directory_browse);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_start_filter);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_clear_filter);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_toggle_pin);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_context_menu);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_file_browse);
+  WM_operatortype_append(BUTTONS_HYPERNOVA_OT_directory_browse);
 }
 
 static void buttons_hypernova_keymap(wmKeyConfig *keyconf)
@@ -1007,22 +1031,6 @@ void ED_spacetype_buttons_hypernova()
 
   /* Register the panel types from modifiers. The actual panels are built per modifier rather
    * than per modifier type. */
-  for (int i = 0; i < NUM_MODIFIER_TYPES; i++) {
-    const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(i));
-    if (mti != nullptr && mti->panel_register != nullptr) {
-      mti->panel_register(art);
-    }
-  }
-  for (int i = 0; i < NUM_SHADER_FX_TYPES; i++) {
-    if (i == eShaderFxType_Light_deprecated) {
-      continue;
-    }
-    const ShaderFxTypeInfo *fxti = BKE_shaderfx_get_info(ShaderFxType(i));
-    if (fxti != nullptr && fxti->panel_register != nullptr) {
-      fxti->panel_register(art);
-    }
-  }
-
   /* regions: header */
   art = static_cast<ARegionType *>(MEM_callocN(sizeof(ARegionType), "spacetype buttons region"));
   art->regionid = RGN_TYPE_HEADER;

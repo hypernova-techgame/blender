@@ -6383,7 +6383,8 @@ static void context_cycle_prop_get(bScreen *screen,
       propname = "context";
       break;
     case SPACE_HYPERNOVA:
-      *r_ptr = RNA_pointer_create(&screen->id, &RNA_SpaceHypernova, area->spacedata.first);
+      *r_ptr = RNA_pointer_create(&screen->id, &RNA_SpaceHypernova, area->spacedata.last);
+      printf("you fucked the code in here maybe ");
       propname = "context_hypernova"; //Crucial Hypernova context should be differentiated from the context properties 
       break;
     case SPACE_USERPREF:
