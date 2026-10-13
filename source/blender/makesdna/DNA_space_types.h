@@ -53,6 +53,8 @@ class AssetRepresentation;
 
 /** Defined in `buttons_intern.hh`. */
 struct SpaceProperties_Runtime;
+/** Defined in `buttons_hypernova_intern.hh`. */
+struct SpaceHypernova_Runtime;
 
 namespace ed::space_node {
 struct SpaceNode_Runtime;
@@ -165,6 +167,52 @@ struct SpaceProperties {
 
   /* Doesn't necessarily need to be a pointer, but runtime structs are still written to files. */
   struct SpaceProperties_Runtime *runtime = nullptr;
+};
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Hypernova Editor
+ * \{ */
+
+/** Hypernova Editor, a copy of the Properties Editor showing the LUSI Modeller tabs. */
+struct SpaceHypernova {
+  DNA_DEFINE_CXX_METHODS(SpaceHypernova)
+
+  SpaceLink *next = nullptr, *prev = nullptr;
+  /** Storage of regions for inactive spaces. */
+  ListBaseT<ARegion> regionbase = {nullptr, nullptr};
+  char spacetype = 0;
+  eSpace_Link_Flag link_flag = {};
+  char _pad0[6] = {};
+  /* End 'SpaceLink' header. */
+
+  /** Deprecated, copied to region. */
+  DNA_DEPRECATED View2D v2d;
+
+  /* For different kinds of property editors (exposed in the space type selector). */
+  short space_subtype = 0;
+
+  /** Context tabs. */
+  eSpaceButtons_Context mainb = BCONTEXT_RENDER, mainbo = BCONTEXT_RENDER,
+                        mainbuser = BCONTEXT_RENDER;
+  uint32_t visible_tabs = 0;
+  /** Preview is signal to refresh. */
+  short preview = 0;
+  eSpaceButtons_Flag flag = {};
+
+  eSpaceButtons_OutlinerSync outliner_sync = PROPERTIES_SYNC_AUTO;
+
+  /** Runtime. */
+  void *path = nullptr;
+  /** Runtime. */
+  int pathflag = 0, dataicon = 0;
+  ID *pinid = nullptr;
+
+  void *texuser = nullptr;
+
+  /* Doesn't necessarily need to be a pointer, but runtime structs are still written to files. */
+  struct SpaceHypernova_Runtime *runtime = nullptr;
 };
 
 /** \} */

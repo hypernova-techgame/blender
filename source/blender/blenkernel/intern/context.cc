@@ -1058,6 +1058,15 @@ SpaceProperties *CTX_wm_space_properties(const bContext *C)
   return nullptr;
 }
 
+SpaceHypernova *CTX_wm_space_hypernova(const bContext *C)
+{
+  ScrArea *area = CTX_wm_area(C);
+  if (area && area->spacetype == SPACE_HYPERNOVA) {
+    return static_cast<SpaceHypernova *>(area->spacedata.first);
+  }
+  return nullptr;
+}
+
 SpaceFile *CTX_wm_space_file(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);

@@ -55,7 +55,7 @@ static ScrArea *biggest_non_image_area(bContext *C)
   for (ScrArea &area : screen->areabase) {
     if (area.winx > 30 && area.winy > 30) {
       size = area.winx * area.winy;
-      if (!area.full && area.spacetype == SPACE_PROPERTIES) {
+      if (!area.full && ELEM(area.spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA)) {
         if (foundwin == 0 && size > bwmaxsize) {
           bwmaxsize = size;
           big = &area;

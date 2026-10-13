@@ -623,6 +623,7 @@ bool ED_operator_spreadsheet_active(bContext *C);
 bool ED_operator_action_active(bContext *C);
 bool ED_operator_region_action_active(bContext *C);
 bool ED_operator_buttons_active(bContext *C);
+bool ED_operator_buttons_hypernova_active(bContext *C);
 bool ED_operator_node_active(bContext *C);
 bool ED_operator_node_editable(bContext *C);
 bool ED_operator_graphedit_active(bContext *C);

@@ -443,6 +443,12 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(tui.wcol_state.error);
   }
 
+  /* Hypernova editor theme: not version based since this is not part of upstream Blender.
+   * Preferences saved without it (fully transparent text) get the default theme colors. */
+  if (btheme->space_hypernova.text[3] == 0) {
+    btheme->space_hypernova = U_theme_default.space_hypernova;
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.

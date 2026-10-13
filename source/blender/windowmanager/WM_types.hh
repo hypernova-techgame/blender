@@ -573,6 +573,7 @@ struct wmNotifier {
 #define ND_SPACE_CLIP (20 << 16)
 #define ND_SPACE_FILE_PREVIEW (21 << 16)
 #define ND_SPACE_SPREADSHEET (22 << 16)
+#define ND_SPACE_HYPERNOVA (24 << 16)
 /* Not a space itself, but a part of another space. */
 #define ND_REGIONS_ASSET_SHELF (23 << 16)
 

@@ -183,7 +183,12 @@ void template_cache_file(Layout *layout,
     return;
   }
 
-  SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  /* Can be drawn in the Properties or the Hypernova editor. */
+  const SpaceProperties *sbuts = CTX_wm_space_properties(C);
+  const SpaceHypernova *sbuts_hypernova = CTX_wm_space_hypernova(C);
+  const int mainb = sbuts ? int(sbuts->mainb) :
+                    sbuts_hypernova ? int(sbuts_hypernova->mainb) :
+                                      int(BCONTEXT_SEPARATOR);
 
   layout->use_property_split_set(true);
 
@@ -192,7 +197,7 @@ void template_cache_file(Layout *layout,
   Layout &sub = row.row(true);
   sub.op("cachefile.reload", "", ICON_FILE_REFRESH);
 
-  if (sbuts->mainb == BCONTEXT_CONSTRAINT) {
+  if (mainb == BCONTEXT_CONSTRAINT) {
     layout->row(false).prop(&fileptr, "scale", UI_ITEM_NONE, IFACE_("Manual Scale"), ICON_NONE);
   }
 

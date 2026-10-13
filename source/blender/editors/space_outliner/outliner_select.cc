@@ -1305,6 +1305,17 @@ static void outliner_sync_to_properties_editors(const bContext *C,
       ED_buttons_set_context(C, sbuts, ptr, context);
     }
   }
+
+  for (ScrArea &area : screen->areabase) {
+    if (area.spacetype != SPACE_HYPERNOVA) {
+      continue;
+    }
+
+    SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area.spacedata.first);
+    if (ED_buttons_should_sync_with_outliner(C, sbuts, &area)) {
+      ED_buttons_set_context(C, sbuts, ptr, context);
+    }
+  }
 }
 
 static void outliner_set_properties_tab(bContext *C, TreeElement *te, TreeStoreElem *tselem)

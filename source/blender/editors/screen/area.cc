@@ -838,6 +838,12 @@ const char *ED_area_region_search_filter_get(const ScrArea *area, const ARegion 
       return ED_buttons_search_string_get(sbuts);
     }
   }
+  else if (area->spacetype == SPACE_HYPERNOVA) {
+    SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area->spacedata.first);
+    if (region->regiontype == RGN_TYPE_WINDOW) {
+      return ED_buttons_search_string_get(sbuts);
+    }
+  }
   else if (area->spacetype == SPACE_USERPREF) {
     SpaceUserPref *sprefs = static_cast<SpaceUserPref *>(area->spacedata.first);
     if (region->regiontype == RGN_TYPE_WINDOW) {
@@ -1291,7 +1297,8 @@ static bool region_azone_edge_poll(const ScrArea *area,
   if (!is_hidden && ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
     return false;
   }
-  if (!is_hidden && region->regiontype == RGN_TYPE_NAV_BAR && area->spacetype == SPACE_PROPERTIES)
+  if (!is_hidden && region->regiontype == RGN_TYPE_NAV_BAR &&
+      ELEM(area->spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA))
   {
     return false;
   }

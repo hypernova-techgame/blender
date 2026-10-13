@@ -173,7 +173,7 @@ void ED_buttons_visible_tabs_menu(bContext *C, ui::Layout *layout, void * /*arg*
       reinterpret_cast<ID *>(CTX_wm_screen(C)), RNA_SpaceProperties, CTX_wm_space_properties(C));
 
   /* These can be reordered freely. */
-  constexpr std::array<StringRefNull, BCONTEXT_TOT> filter_items = {
+  constexpr std::array<StringRefNull, BCONTEXT_PROPERTIES_TOT> filter_items = {
       "show_properties_tool",        "show_properties_render",
       "show_properties_output",      "show_properties_view_layer",
       "show_properties_scene",       "show_properties_world",

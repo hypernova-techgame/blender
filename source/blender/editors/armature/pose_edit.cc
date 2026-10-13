@@ -65,7 +65,7 @@ Object *ED_pose_object_from_context(bContext *C)
 
   /* Since this call may also be used from the buttons window,
    * we need to check for where to get the object. */
-  if (area && area->spacetype == SPACE_PROPERTIES) {
+  if (area && ELEM(area->spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA)) {
     ob = ed::object::context_active_object(C);
   }
   else {

@@ -182,12 +182,18 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
     SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
     id_pin = sbuts->pinid;
   }
+  else if (space_type == SPACE_HYPERNOVA) {
+    SpaceHypernova *sbuts = static_cast<SpaceHypernova *>(area->spacedata.first);
+    id_pin = sbuts->pinid;
+  }
 
   if (id_pin && (GS(id_pin->name) == ID_OB)) {
     /* Pinned data takes priority, in this case ignore selection & other objects in the mode. */
     ob = id_cast<Object *>(id_pin);
   }
-  else if ((space_type == SPACE_PROPERTIES) && (use_objects_in_mode == false)) {
+  else if (ELEM(space_type, SPACE_PROPERTIES, SPACE_HYPERNOVA) &&
+           (use_objects_in_mode == false))
+  {
     /* When using the space-properties, we don't want to use the entire selection
      * as the current active object may not be selected.
      *

@@ -2446,6 +2446,10 @@ void RNA_api_ui_layout(StructRNA *srna)
   RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 
   func = RNA_def_function(
+      srna, "template_texture_user_hypernova", "uiTemplateTextureUserHypernova");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+
+  func = RNA_def_function(
       srna, "template_keymap_item_properties", "uiTemplateKeymapItemProperties");
   parm = RNA_def_pointer(func, "item", "KeyMapItem", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);

@@ -3026,6 +3026,7 @@ static void legacy_gpencil_sanitize_annotations(Main &bmain)
           case SPACE_GRAPH:
           case SPACE_OUTLINER:
           case SPACE_PROPERTIES:
+          case SPACE_HYPERNOVA:
           case SPACE_FILE:
           case SPACE_INFO:
           case SPACE_TEXT:

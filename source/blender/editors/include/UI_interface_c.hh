@@ -2741,6 +2741,13 @@ void uiTemplateTextureShow(ui::Layout *layout,
                            PointerRNA *ptr,
                            PropertyRNA *prop);
 
+/** Hypernova editor versions of #uiTemplateTextureUser and #uiTemplateTextureShow. */
+void uiTemplateTextureUserHypernova(ui::Layout *layout, bContext *C);
+void uiTemplateTextureShowHypernova(ui::Layout *layout,
+                                    const bContext *C,
+                                    PointerRNA *ptr,
+                                    PropertyRNA *prop);
+
 void uiTemplateMovieClip(
     ui::Layout *layout, bContext *C, PointerRNA *ptr, StringRefNull propname, bool compact);
 void uiTemplateTrack(ui::Layout *layout, PointerRNA *ptr, StringRefNull propname);

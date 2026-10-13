@@ -131,6 +131,9 @@ const uchar *get_color_ptr(bTheme *btheme, int spacetype, int colorid)
         case SPACE_PROPERTIES:
           ts = &btheme->space_properties;
           break;
+        case SPACE_HYPERNOVA:
+          ts = &btheme->space_hypernova;
+          break;
         case SPACE_VIEW3D:
           ts = &btheme->space_view3d;
           break;
@@ -227,7 +230,7 @@ const uchar *get_color_ptr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_TEXT:
           if (ELEM(g_theme_state.regionid, RGN_TYPE_UI, RGN_TYPE_TOOLS) ||
-              ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_USERPREF))
+              ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA, SPACE_USERPREF))
           {
             cp = btheme->tui.panel_text;
           }
@@ -262,7 +265,7 @@ const uchar *get_color_ptr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_TITLE:
           if (ELEM(g_theme_state.regionid, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_CHANNELS) ||
-              ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_USERPREF))
+              ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA, SPACE_USERPREF))
           {
             cp = btheme->tui.panel_title;
           }
@@ -1505,7 +1508,7 @@ bool get_icon_color_4ubv(int colorid, uchar col[4])
   }
   else if (!((g_theme_state.spacetype == SPACE_OUTLINER &&
               g_theme_state.regionid == RGN_TYPE_WINDOW) ||
-             (g_theme_state.spacetype == SPACE_PROPERTIES &&
+             (ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_HYPERNOVA) &&
               g_theme_state.regionid == RGN_TYPE_NAV_BAR) ||
              (g_theme_state.spacetype == SPACE_FILE && g_theme_state.regionid == RGN_TYPE_WINDOW)))
   {

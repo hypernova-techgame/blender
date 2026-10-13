@@ -738,6 +738,7 @@ void ED_preview_draw(
     ID *parent = static_cast<ID *>(parentp);
     MTex *slot = static_cast<MTex *>(slotp);
     SpaceProperties *sbuts = CTX_wm_space_properties(C);
+    SpaceHypernova *sbuts_hypernova = CTX_wm_space_hypernova(C);
     const void *owner = CTX_wm_area(C);
     ShaderPreview *sp = static_cast<ShaderPreview *>(
         WM_jobs_customdata_from_type(wm, owner, WM_JOB_TYPE_RENDER_PREVIEW));
@@ -766,12 +767,17 @@ void ED_preview_draw(
     /* start a new preview render job if signaled through sbuts->preview,
      * if no render result was found and no preview render job is running,
      * or if the job is running and the size of preview changed */
-    if ((sbuts != nullptr && sbuts->preview) || (ui_preview->tag & UI_PREVIEW_TAG_DIRTY) ||
+    if ((sbuts != nullptr && sbuts->preview) ||
+        (sbuts_hypernova != nullptr && sbuts_hypernova->preview) ||
+        (ui_preview->tag & UI_PREVIEW_TAG_DIRTY) ||
         (!ok && !WM_jobs_test(wm, owner, WM_JOB_TYPE_RENDER_PREVIEW)) ||
         (sp && (abs(sp->sizex - newx) >= 2 || abs(sp->sizey - newy) > 2)))
     {
       if (sbuts != nullptr) {
         sbuts->preview = 0;
+      }
+      if (sbuts_hypernova != nullptr) {
+        sbuts_hypernova->preview = 0;
       }
       ED_preview_shader_job(C, owner, id, parent, slot, newx, newy, PR_BUTS_RENDER);
       ui_preview->tag &= ~UI_PREVIEW_TAG_DIRTY;

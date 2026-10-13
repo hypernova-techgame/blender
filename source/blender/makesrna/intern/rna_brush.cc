@@ -724,6 +724,7 @@ static void rna_Brush_material_update(bContext * /*C*/, PointerRNA *ptr)
   BKE_brush_tag_unsaved_changes(br);
   /* number of material users changed */
   WM_main_add_notifier(NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_main_add_notifier(NC_SPACE | ND_SPACE_HYPERNOVA, nullptr);
 }
 
 static void rna_Brush_main_tex_update(bContext *C, PointerRNA *ptr)
@@ -1062,6 +1063,7 @@ static void rna_BrushGpencilSettings_use_material_pin_update(bContext *C, Pointe
   rna_BrushGpencilSettings_update(CTX_data_main(C), CTX_data_scene(C), ptr);
   /* number of material users changed */
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_HYPERNOVA, nullptr);
 }
 
 static bool rna_BrushGpencilSettings_material_poll(PointerRNA * /*ptr*/, PointerRNA value)

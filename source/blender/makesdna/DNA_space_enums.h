@@ -114,10 +114,17 @@ enum eSpaceButtons_Context : short {
   BCONTEXT_COLLECTION = 17,
   BCONTEXT_STRIP = 18,
   BCONTEXT_STRIP_MODIFIER = 19,
+  /* Hypernova editor only. */
+  BCONTEXT_EXPORTER = 20,
+  BCONTEXT_UTILS = 21,
+  BCONTEXT_MATERIAL_DETAILS = 22,
 
   /* Keep last. */
   BCONTEXT_TOT,
 };
+
+/** Number of contexts shown by the Properties editor (the Hypernova ones are not included). */
+#define BCONTEXT_PROPERTIES_TOT (BCONTEXT_STRIP_MODIFIER + 1)
 
 /** #SpaceProperties.flag */
 enum eSpaceButtons_Flag : char {
@@ -1179,9 +1186,10 @@ enum eSpace_Type : char {
   SPACE_CLIP = 20,
   SPACE_TOPBAR = 21,
   SPACE_STATUSBAR = 22,
-  SPACE_SPREADSHEET = 23
+  SPACE_SPREADSHEET = 23,
+  SPACE_HYPERNOVA = 24
 
-#define SPACE_TYPE_NUM (SPACE_SPREADSHEET + 1)
+#define SPACE_TYPE_NUM (SPACE_HYPERNOVA + 1)
 };
 
 /* use for function args */

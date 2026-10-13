@@ -1434,6 +1434,7 @@ static void template_ID(const bContext *C,
 
   if (template_ui.idcode == ID_TE) {
     uiTemplateTextureShow(&layout, C, &template_ui.ptr, template_ui.prop);
+    uiTemplateTextureShowHypernova(&layout, C, &template_ui.ptr, template_ui.prop);
   }
   block_align_end(block);
 }
